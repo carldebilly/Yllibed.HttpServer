@@ -1,0 +1,13 @@
+﻿<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
+  <PropertyGroup>
+    <TargetFrameworks>netstandard1.6;net46</TargetFrameworks>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Nancy" Version="2.0.0-Pre1856" />
+    <PackageReference Include="NETStandard.Library" Version="1.6.1" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Yllibed.Framework\Yllibed.Framework.csproj" />
+    <ProjectReference Include="..\Yllibed.HttpServer\Yllibed.HttpServer.csproj" />
+  </ItemGroup>
+</Project>
