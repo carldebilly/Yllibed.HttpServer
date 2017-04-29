@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Nancy;
-using Nancy.Bootstrapper;
 using HttpStatusCode = System.Net.HttpStatusCode;
 
 namespace Yllibed.HttpServer.Nancy.Tests
@@ -23,9 +22,8 @@ namespace Yllibed.HttpServer.Nancy.Tests
 				var requestUri = serverUri;
 
 				using (var sut = new NancyFxHandler())
-				using(server.RegisterHandler(sut))
+				using (server.RegisterHandler(sut))
 				{
-
 					using (var client = new HttpClient())
 					{
 						var response = await client.GetAsync(requestUri, _ct);

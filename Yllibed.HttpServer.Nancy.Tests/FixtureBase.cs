@@ -7,13 +7,15 @@ namespace Yllibed.HttpServer.Nancy.Tests
 {
 	public class FixtureBase
 	{
-		private CancellationTokenSource _ctSource;
 		protected CancellationToken _ct;
+		private CancellationTokenSource _ctSource;
 
 		[TestInitialize]
 		public void Initialize()
 		{
-			_ctSource = Debugger.IsAttached ? new CancellationTokenSource() : new CancellationTokenSource(TimeSpan.FromSeconds(10));
+			_ctSource = Debugger.IsAttached
+				? new CancellationTokenSource()
+				: new CancellationTokenSource(TimeSpan.FromSeconds(10));
 			_ct = _ctSource.Token;
 		}
 
