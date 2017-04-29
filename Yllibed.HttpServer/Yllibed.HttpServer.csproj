@@ -26,7 +26,11 @@
 	</PropertyGroup>
 
 	<ItemGroup Condition=" '$(TargetFramework)' == 'uap10.0' ">
-		<PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform " Version="5.3.3" />
+		<PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform" Version="5.3.3" />
+	</ItemGroup>
+
+	<ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.4' ">
+		<PackageReference Include="NETStandard.Library" Version="1.6.1" />
 	</ItemGroup>
 
 	<ItemGroup>
