@@ -11,10 +11,11 @@ using Yllibed.HttpServer.Handlers;
 
 namespace Yllibed.HttpServer
 {
-	public class NancyFxHandler : IHttpHandler
+	public class NancyFxHandler : IHttpHandler, IDisposable
 	{
 		private readonly INancyBootstrapper _nancyBootstrapper;
 		private INancyEngine _engine;
+		private int _isInitialized;
 
 		public NancyFxHandler(INancyBootstrapper nancyBootstrapper = null)
 		{
@@ -23,14 +24,22 @@ namespace Yllibed.HttpServer
 
 		public void Start()
 		{
-			_engine = _nancyBootstrapper.GetEngine();
+			if (Interlocked.CompareExchange(ref _isInitialized, 1, 0) != 0)
+			{
+				return; // already initialized
+			}
+
+			_nancyBootstrapper.Initialise();
+
+			_engine = _engine ?? _nancyBootstrapper.GetEngine();
 		}
 
-		public async Task HandleRequest(CancellationToken ct, Uri serverRoot, string relativePath, IHttpServerRequest request)
+		public async Task HandleRequest(CancellationToken ct, IHttpServerRequest request, string relativePath)
 		{
-			var requestUri = new Uri(serverRoot, relativePath);
 			// TODO: Request body for POST requests
-			var nancyRequest = new Request(request.Method, requestUri, headers: GetNancyHeaders(request.Headers));
+			var nancyRequest = new Request(request.Method, request.Url, headers: GetNancyHeaders(request.Headers));
+
+			Start();
 
 			using (var nancyContext = await _engine.HandleRequest(nancyRequest, x => x, ct))
 			{
@@ -75,5 +84,9 @@ namespace Yllibed.HttpServer
 			return builder.ToImmutable();
 		}
 
+		public void Dispose()
+		{
+			_engine.Dispose();
+		}
 	}
 }

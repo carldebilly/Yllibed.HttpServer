@@ -27,7 +27,7 @@ namespace Yllibed.HttpServer.Handlers
 		private readonly Subject<string> _notifications = new Subject<string>();
 
 #pragma warning disable 1998
-		public async Task HandleRequest(CancellationToken ct, Uri serverRoot, string relativePath, IHttpServerRequest request)
+		public async Task HandleRequest(CancellationToken ct, IHttpServerRequest request, string relativePath)
 		{
 			if (relativePath.Equals(_notifyPath, StringComparison.OrdinalIgnoreCase))
 			{

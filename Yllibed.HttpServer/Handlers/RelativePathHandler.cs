@@ -52,7 +52,7 @@ namespace Yllibed.HttpServer.Handlers
 			});
 		}
 
-		async Task IHttpHandler.HandleRequest(CancellationToken ct, Uri serverRoot, string relativePath, IHttpServerRequest request)
+		async Task IHttpHandler.HandleRequest(CancellationToken ct, IHttpServerRequest request, string relativePath)
 		{
 			var handlers = _handlers;
 			if (handlers.IsNullOrEmpty())
@@ -70,7 +70,7 @@ namespace Yllibed.HttpServer.Handlers
 
 				foreach (var handler in handlers)
 				{
-					await handler.HandleRequest(ct, serverRoot, subPath, request);
+					await handler.HandleRequest(ct, request, subPath);
 				}
 			}
 		}

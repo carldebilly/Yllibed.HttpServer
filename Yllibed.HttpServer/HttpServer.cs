@@ -67,7 +67,7 @@ namespace Yllibed.HttpServer
 			{
 				try
 				{
-					await handler.HandleRequest(ct, _rootUri, request.Path, request);
+					await handler.HandleRequest(ct, request, request.Path);
 				}
 				catch (Exception ex)
 				{
@@ -97,7 +97,9 @@ namespace Yllibed.HttpServer
 		{
 			_tcpListener4 = new TcpListener(IPAddress.Any, _localPort);
 			_tcpListener4.Start();
-			_localPort = (ushort)(_tcpListener4.LocalEndpoint as IPEndPoint).Port;
+
+			// Tentatively use the same port for IPv6
+			_localPort = (ushort)((IPEndPoint) _tcpListener4.LocalEndpoint).Port;
 
 			_tcpListener6 = new TcpListener(IPAddress.IPv6Any, _localPort);
 			_tcpListener6.Start();
@@ -375,7 +377,7 @@ namespace Yllibed.HttpServer
 
 						foreach (var value in header.Value)
 						{
-							await responseWriter.WriteFormattedLineAsync($"{header.Key}: {header.Value}");
+							await responseWriter.WriteFormattedLineAsync($"{header.Key}: {value}");
 						}
 					}
 				}
@@ -461,14 +463,7 @@ namespace Yllibed.HttpServer
 
 			public string Accept { get; private set; }
 
-			public Uri Url
-			{
-				get
-				{
-					var uriString = "http://" + HostName + ':' + Port + Path;
-					return new Uri(uriString, UriKind.Absolute);
-				}
-			}
+			public Uri Url => _url ?? (_url = new Uri("http://" + Host + Path, UriKind.Absolute));
 
 			public ImmutableDictionary<string, ImmutableList<string>> Headers { get; private set; }
 
@@ -493,6 +488,7 @@ namespace Yllibed.HttpServer
 			private string _responseResultText;
 			private Func<CancellationToken, Task<Stream>> _responseStreamFactory;
 			private IDictionary<string, ImmutableList<string>> _responseHeaders;
+			private Uri _url;
 
 			internal bool IsResponseSet { get; private set; }
 

@@ -15,7 +15,6 @@ namespace Yllibed.HttpServer.Tests
 		[TestMethod]
 		public async Task HttpServer_Test404WhenNoHandlers()
 		{
-			Console.WriteLine("1");
 			using (var scheduler = new EventLoopScheduler())
 			{
 				var sut = new HttpServer(scheduler);
@@ -34,7 +33,6 @@ namespace Yllibed.HttpServer.Tests
 		[TestMethod]
 		public async Task HttpServer_TestWithStaticHandler()
 		{
-			Console.WriteLine("2");
 			using (var scheduler = new EventLoopScheduler())
 			{
 				var sut = new HttpServer(scheduler);

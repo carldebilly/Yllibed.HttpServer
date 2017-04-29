@@ -13,6 +13,6 @@ namespace Yllibed.HttpServer.Handlers
 	/// </remarks>
 	public interface IHttpHandler
 	{
-		Task HandleRequest(CancellationToken ct, Uri serverRoot, string relativePath, IHttpServerRequest request);
+		Task HandleRequest(CancellationToken ct, IHttpServerRequest request, string relativePath);
 	}
 }

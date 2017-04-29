@@ -25,7 +25,7 @@ namespace Yllibed.HttpServer.Handlers
 		}
 
 #pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
-		public async Task HandleRequest(CancellationToken ct, Uri serverRoot, string relativePath, IHttpServerRequest request)
+		public async Task HandleRequest(CancellationToken ct, IHttpServerRequest request, string relativePath)
 		{
 			if (relativePath.Equals(_path, StringComparison.OrdinalIgnoreCase))
 			{
