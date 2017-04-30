@@ -16,7 +16,7 @@ namespace Yllibed.HttpServer.Nancy.Tests
 		{
 			using (var scheduler = new EventLoopScheduler())
 			{
-				var server = new HttpServer(scheduler);
+				var server = new HttpServer(scheduler: scheduler);
 
 				var serverUri = await server.GetRootUri(_ct);
 				var requestUri = serverUri;

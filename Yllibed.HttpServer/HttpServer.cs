@@ -55,9 +55,17 @@ namespace Yllibed.HttpServer
 
 		private static readonly Encoding Utf8 = new UTF8Encoding(false, false);
 
-		public HttpServer(IScheduler scheduler, ushort localPort = 0)
+		/// <summary>
+		/// Create a new server.
+		/// </summary>
+		/// <remarks>
+		/// Not specifying a port will let the OS pick one available.
+		/// </remarks>
+		/// <param name="localPort">Port number to listen to.  0=dynamic.</param>
+		/// <param name="scheduler">The scheduler to use for requests processing. (default to TaskPool)</param>
+		public HttpServer(ushort localPort = 0, IScheduler scheduler = null)
 		{
-			_scheduler = scheduler;
+			_scheduler = scheduler ?? TaskPoolScheduler.Default;
 			_localPort = localPort;
 		}
 

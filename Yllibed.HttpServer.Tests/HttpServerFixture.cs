@@ -17,7 +17,7 @@ namespace Yllibed.HttpServer.Tests
 		{
 			using (var scheduler = new EventLoopScheduler())
 			{
-				var sut = new HttpServer(scheduler);
+				var sut = new HttpServer(scheduler: scheduler);
 
 				var serverUri = await sut.GetRootUri(_ct);
 				var requestUri = serverUri;
@@ -35,7 +35,7 @@ namespace Yllibed.HttpServer.Tests
 		{
 			using (var scheduler = new EventLoopScheduler())
 			{
-				var sut = new HttpServer(scheduler);
+				var sut = new HttpServer(scheduler: scheduler);
 				sut.RegisterHandler(new StaticHandler("abcd", "text/plain", "1234"));
 
 				var serverUri = await sut.GetRootUri(_ct);
