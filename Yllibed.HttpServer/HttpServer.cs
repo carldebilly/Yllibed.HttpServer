@@ -393,15 +393,34 @@ namespace Yllibed.HttpServer
 
 			private async Task ProcessResponsePayload(CancellationToken ct, TextWriter responseWriter, Stream responseStream)
 			{
-				using (var streamToSend = await _responseStreamFactory(ct))
+				if (_responseStreamFactory != null)
 				{
+					using (var streamToSend = await _responseStreamFactory(ct))
+					{
+						// Content-Length header
+						await responseWriter.WriteFormattedLineAsync($"Content-Length: {streamToSend.Length}");
+						await responseWriter.WriteLineAsync();
+
+						// Ensure header is flushed before writing to inner stream directly
+						await responseWriter.FlushAsync();
+
+						// Write the stream content to inner stream
+						await streamToSend.CopyToAsync(responseStream, 2048, ct);
+					}
+				}
+				else
+				{
+					var bytes = Utf8.GetBytes(_responseContent);
+
 					// Content-Length header
-					await responseWriter.WriteFormattedLineAsync($"Content-Length: {streamToSend.Length}");
+					await responseWriter.WriteFormattedLineAsync($"Content-Length: {bytes.Length}");
 					await responseWriter.WriteLineAsync();
 
+					// Ensure header is flushed before writing to inner stream directly
 					await responseWriter.FlushAsync();
 
-					await streamToSend.CopyToAsync(responseStream);
+					// Write the stream content to inner stream
+					await responseStream.WriteAsync(bytes, 0, bytes.Length, ct);
 				}
 			}
 
@@ -491,10 +510,27 @@ namespace Yllibed.HttpServer
 				IsResponseSet = true;
 			}
 
+			public void SetResponse(
+				string contentType,
+				string content,
+				uint resultCode,
+				string resultText,
+				IDictionary<string, ImmutableList<string>> headers = null)
+			{
+				_responseContentType = contentType;
+				_responseResultCode = resultCode;
+				_responseResultText = resultText;
+				_responseContent = content;
+				_responseHeaders = headers;
+
+				IsResponseSet = true;
+			}
+
 			private string _responseContentType;
 			private uint _responseResultCode;
 			private string _responseResultText;
 			private Func<CancellationToken, Task<Stream>> _responseStreamFactory;
+			private string _responseContent;
 			private IDictionary<string, ImmutableList<string>> _responseHeaders;
 			private Uri _url;
 

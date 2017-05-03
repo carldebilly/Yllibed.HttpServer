@@ -4,6 +4,8 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
+#pragma warning disable 1998
+
 namespace Yllibed.HttpServer.Handlers
 {
 	public class StaticHandler : IHttpHandler
@@ -24,15 +26,17 @@ namespace Yllibed.HttpServer.Handlers
 			}
 		}
 
-#pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
 		public async Task HandleRequest(CancellationToken ct, IHttpServerRequest request, string relativePath)
 		{
 			if (relativePath.Equals(_path, StringComparison.OrdinalIgnoreCase))
 			{
-				request.SetResponse(_responseContentType, GetStream);
+				if (request.Method.Equals("GET", StringComparison.OrdinalIgnoreCase))
+				{
+					request.SetResponse(_responseContentType, GetStream);
+				}
+				request.SetResponse("text/plain", "Method not authorized - use a GET", 405, "METHOD NOT ALLOWED");
 			}
 		}
-#pragma warning restore CS1998 // Async method lacks 'await' operators and will run synchronously
 
 		private Task<Stream> GetStream(CancellationToken ct)
 		{

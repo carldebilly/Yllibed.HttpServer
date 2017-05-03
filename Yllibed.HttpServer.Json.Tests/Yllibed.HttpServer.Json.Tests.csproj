@@ -1,5 +1,4 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
 	<PropertyGroup>
 		<OutputType>library</OutputType>
 		<TargetFramework>net46</TargetFramework>
@@ -11,7 +10,6 @@
 		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.0.0" />
 		<PackageReference Include="MSTest.TestAdapter" Version="1.1.17" />
 		<PackageReference Include="MSTest.TestFramework" Version="1.1.17" />
-		<PackageReference Include="Nancy" Version="2.0.0-Pre1857" />
 		<PackageReference Include="System.Collections.Immutable" Version="1.3.1" />
 		<PackageReference Include="System.Diagnostics.DiagnosticSource" Version="4.0.0" />
 		<PackageReference Include="System.Reactive.Linq" Version="3.1.1" />
@@ -21,8 +19,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\Yllibed.HttpServer.Nancy\Yllibed.HttpServer.Nancy.csproj" />
-		<ProjectReference Include="..\Yllibed.HttpServer\Yllibed.HttpServer.csproj" />
+	  <ProjectReference Include="..\Yllibed.Framework\Yllibed.Framework.csproj" />
+	  <ProjectReference Include="..\Yllibed.HttpServer.Json\Yllibed.HttpServer.Json.csproj" />
+	  <ProjectReference Include="..\Yllibed.HttpServer\Yllibed.HttpServer.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

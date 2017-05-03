@@ -122,5 +122,15 @@ namespace Yllibed.HttpServer
 			uint resultCode = 200,
 			string resultText = "OK",
 			IDictionary<string, ImmutableList<string>> headers = null);
+
+		/// <summary>
+		/// This method is called by handler to set the result to a request with a string content.
+		/// </summary>
+		void SetResponse(
+			string contentType,
+			string content,
+			uint resultCode = 200,
+			string resultText = "OK",
+			IDictionary<string, ImmutableList<string>> headers = null);
 	}
 }

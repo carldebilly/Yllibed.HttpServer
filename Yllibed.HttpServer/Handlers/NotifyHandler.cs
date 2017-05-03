@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
+#pragma warning disable 1998
+
 namespace Yllibed.HttpServer.Handlers
 {
 	/// <summary>
@@ -26,35 +28,21 @@ namespace Yllibed.HttpServer.Handlers
 
 		private readonly Subject<string> _notifications = new Subject<string>();
 
-#pragma warning disable 1998
 		public async Task HandleRequest(CancellationToken ct, IHttpServerRequest request, string relativePath)
 		{
 			if (relativePath.Equals(_notifyPath, StringComparison.OrdinalIgnoreCase))
 			{
 				if (request.Method.Equals("POST", StringComparison.OrdinalIgnoreCase))
 				{
-					request.SetResponse("text/plain", Create200);
+					request.SetResponse("text/plain", "Notified");
 					_notifications.OnNext(request.Body);
 				}
 				else
 				{
-					request.SetResponse("text/plain", Create405, 405, "METHOD NOT ALLOWED");
+					request.SetResponse("text/plain", "Method not authorized - use a POST", 405, "METHOD NOT ALLOWED");
 				}
 			}
 		}
-
-		private static Task<Stream> Create200(CancellationToken ct)
-		{
-			var stream = new MemoryStream(Encoding.UTF8.GetBytes("Notified"));
-			return Task.FromResult(stream as Stream);
-		}
-
-		private static Task<Stream> Create405(CancellationToken ct)
-		{
-			var stream = new MemoryStream(Encoding.UTF8.GetBytes("Method not authorized - use a POST"));
-			return Task.FromResult(stream as Stream);
-		}
-#pragma warning restore 1998
 
 		public IObservable<string> Notifications => _notifications;
 
