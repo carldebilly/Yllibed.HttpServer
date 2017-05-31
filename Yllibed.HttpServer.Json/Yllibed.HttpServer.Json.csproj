@@ -12,6 +12,9 @@
 		<Description>Json adapter for Yllibed Versatile Http Server using Newtownsoft JSON.NET</Description>
 		<Copyright>Copyright (C) 2017 - Carl de Billy - All Rights Reserved</Copyright>
 		<OutputType>library</OutputType>
+		<PackageLicenseUrl>https://github.com/carldebilly/Yllibed.HttpServer/blob/master/LICENSE.txt</PackageLicenseUrl>
+		<RepositoryUrl>https://github.com/carldebilly/Yllibed.HttpServer</RepositoryUrl>
+		<PackageTags>Http Server UWP JSON</PackageTags>
 	</PropertyGroup>
 
 	<ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.4' ">

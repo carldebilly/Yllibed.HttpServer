@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26403.7
+VisualStudioVersion = 15.0.26430.6
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Yllibed.HttpServer", "Yllibed.HttpServer\Yllibed.HttpServer.csproj", "{8D21CD92-C0E8-478A-867C-2D07A02879D5}"
 EndProject
@@ -15,6 +15,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Yllibed.HttpServer.Nancy.Te
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{0A711B14-A668-4751-AEBF-0BB97641C432}"
 	ProjectSection(SolutionItems) = preProject
+		build.proj = build.proj
+		gitversion.yml = gitversion.yml
 		LICENSE.txt = LICENSE.txt
 		README.md = README.md
 	EndProjectSection

@@ -11,6 +11,8 @@
 		<Description>Yllibed Core Framwork</Description>
 		<Copyright>Copyright (C) 2017 - Carl de Billy - All Rights Reserved</Copyright>
 		<OutputType>library</OutputType>
+		<PackageLicenseUrl>https://github.com/carldebilly/Yllibed.HttpServer/blob/master/LICENSE.txt</PackageLicenseUrl>
+		<RepositoryUrl>https://github.com/carldebilly/Yllibed.HttpServer</RepositoryUrl>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(TargetFramework)' == 'uap10.0'">
