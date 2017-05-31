@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<Target Name="Build">
+		<MSBuild Properties="Configuration=$(Configuration);PackageVersion=$(GITVERSION_FullSemVer);InformationalVersion=$(GITVERSION_InformationalVersion);VisualStudioVersion=15.0"
+							Projects="Yllibed.HttpServer.sln"
+							Targets="Restore;Build"
+							RebaseOutputs="false"
+							BuildInParallel="True" />
+	</Target>
+</Project>
