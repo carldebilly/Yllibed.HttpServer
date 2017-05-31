@@ -5,10 +5,16 @@ Last build state (master): ![](https://carldebilly.visualstudio.com/_apis/public
 
 ## Quick start-up
 
-``` csharp
-    var myServer = new HttpServer(8080); // create a web server on port 8080
-	myServer.RegisterHandler(new StaticHandler(""))
-```
+1. First install nuget package:
+	``` powershell
+		PM> Install-Package Yllibed.HttpServer 
+	```
+
+2. Register a server in your app:
+	``` csharp
+		var myServer = new HttpServer(8080); // create a web server on port 8080
+		myServer.RegisterHandler(new StaticHandler(""))
+	```
 
 ## What it is
 * Simple web server which can be extended using custom code
