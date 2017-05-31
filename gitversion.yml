@@ -1,0 +1,11 @@
+assembly-versioning-scheme: MajorMinorPatch
+mode: ContinuousDeployment
+next-version: 0.9
+continuous-delivery-fallback-tag: ""
+branches:
+  master:
+    tag:
+  dev/.*?(/(.*?))?:
+    tag: dev.{BranchName}
+ignore:
+  sha: []
