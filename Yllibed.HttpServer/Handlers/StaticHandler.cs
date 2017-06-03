@@ -33,6 +33,7 @@ namespace Yllibed.HttpServer.Handlers
 				if (request.Method.Equals("GET", StringComparison.OrdinalIgnoreCase))
 				{
 					request.SetResponse(_responseContentType, GetStream);
+					return;
 				}
 				request.SetResponse("text/plain", "Method not authorized - use a GET", 405, "METHOD NOT ALLOWED");
 			}
