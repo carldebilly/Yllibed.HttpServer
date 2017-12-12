@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFrameworks>netstandard1.4;net46</TargetFrameworks>
+		<TargetFrameworks>netstandard2.0;net47</TargetFrameworks>
 		<AssemblyName>Yllibed.HttpServer.Json</AssemblyName>
 		<RootNamespace>Yllibed.HttpServer.Json</RootNamespace>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
@@ -17,13 +17,9 @@
 		<PackageTags>Http Server UWP JSON</PackageTags>
 	</PropertyGroup>
 
-	<ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.4' ">
-		<PackageReference Include="NETStandard.Library" Version="1.6.1" />
-	</ItemGroup>
-
 	<ItemGroup>
-	  <PackageReference Include="Newtonsoft.Json" Version="10.0.2" />
-	  <PackageReference Include="System.ValueTuple" Version="4.3.0" />
+	  <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
+	  <PackageReference Include="System.ValueTuple" Version="4.4.0" />
 	</ItemGroup>
 
 	<ItemGroup>

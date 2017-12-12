@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
 	<PropertyGroup>
-		<TargetFrameworks>netstandard1.6;net46</TargetFrameworks>
+		<TargetFrameworks>netstandard2.0;net47</TargetFrameworks>
 		<AssemblyName>Yllibed.HttpServer.Nancy</AssemblyName>
 		<RootNamespace>Yllibed.HttpServer.Nancy</RootNamespace>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
@@ -17,7 +17,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Nancy" Version="2.0.0-Pre1857" />
+		<PackageReference Include="Nancy" Version="2.0.0-Pre1893" />
 	</ItemGroup>
 
 	<ItemGroup>
