@@ -1,11 +1,12 @@
 # Yllibed HttpServer
 This is a versatile http server designed to be used in mobile/UWP applications.
 
-Last build state (master): ![](https://carldebilly.visualstudio.com/_apis/public/build/definitions/66b77220-645e-4483-808e-0e5a63ea38ff/1/badge)
+## Packages and NuGet Statistics
 
-| Package | Build                                                                                                    | Nuget |
-| -- |----------------------------------------------------------------------------------------------------------| -- |
-| Yllibed.HttpServer - stable | ![Build Status](https://github.com/carldebilly/Yllibed.HttpServer/actions/workflows/build.yml/badge.svg) | [![NuGet Status](http://img.shields.io/nuget/v/Yllibed.HttpServer.svg?style=flat)](https://www.nuget.org/packages/Yllibed.HttpServer/) |
+| Package                                                                                   | Downloads                                                                                      | Stable Version                                                                                         | Pre-release Version                                                                                     |
+|-------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------|
+| [**HttpServer**](https://www.nuget.org/packages/Yllibed.HttpServer/)                      | ![Downloads](https://img.shields.io/nuget/dt/Yllibed.HttpServer?label=Downloads)              | ![Stable](https://img.shields.io/nuget/v/Yllibed.HttpServer?label=Stable&labelColor=blue)              | ![Pre-release](https://img.shields.io/nuget/vpre/Yllibed.HttpServer?label=Pre-release&labelColor=yellow)           |
+| [**HttpServer.Json**](https://www.nuget.org/packages/Yllibed.HttpServer.Json/)            | ![Downloads](https://img.shields.io/nuget/dt/Yllibed.HttpServer.Json?label=Downloads)         | ![Stable](https://img.shields.io/nuget/v/Yllibed.HttpServer.Json?label=Stable&labelColor=blue)         | ![Pre-release](https://img.shields.io/nuget/vpre/Yllibed.HttpServer.Json?label=Pre-release&labelColor=yellow)       |
 
 ## Quick start-up
 
