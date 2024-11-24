@@ -1,0 +1,39 @@
+name: Build and Restore
+
+on:
+    push:
+        branches:
+            - master
+    pull_request:
+
+jobs:
+    build:
+        runs-on: windows-latest
+
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v3
+              with:
+                  fetch-depth: 0 # Need full history for GitVersion
+
+            - name: Setup .NET
+              uses: actions/setup-dotnet@v3
+              with:
+                  dotnet-version: '8.0'
+
+            - name: Setup .NET
+              uses: actions/setup-dotnet@v3
+              with:
+                  dotnet-version: '9.0'
+
+            - name: Install GitVersion
+              run: dotnet tool install --global GitVersion.Tool --version 6.0.5
+
+            - name: Verify GitVersion
+              run: dotnet-gitversion /output buildserver
+
+            - name: Run MSBuild
+              env:
+                  GITVERSION_SemVer: ${{ steps.gitversion.outputs.SemVer }}
+                  GITVERSION_InformationalVersion: ${{ steps.gitversion.outputs.InformationalVersion }}
+              run: msbuild build.proj /p:Configuration=Release
