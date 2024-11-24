@@ -26,14 +26,5 @@ jobs:
               with:
                   dotnet-version: '9.0'
 
-            - name: Install GitVersion
-              run: dotnet tool install --global GitVersion.Tool --version 6.0.5
-
-            - name: Verify GitVersion
-              run: dotnet-gitversion /output buildserver
-
             - name: Run MSBuild
-              env:
-                  GITVERSION_SemVer: ${{ steps.gitversion.outputs.SemVer }}
-                  GITVERSION_InformationalVersion: ${{ steps.gitversion.outputs.InformationalVersion }}
-              run: msbuild build.proj /p:Configuration=Release
+              run: msbuild build.proj /p:PublicRelease=true /p:Configuration=Release
