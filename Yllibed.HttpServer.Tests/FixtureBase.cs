@@ -1,4 +1,5 @@
-﻿using System;
+﻿#nullable disable
+using System;
 using System.Diagnostics;
 using System.Threading;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -7,7 +8,7 @@ namespace Yllibed.HttpServer.Tests
 {
 	public class FixtureBase
 	{
-		protected CancellationToken _ct;
+		protected CancellationToken CT;
 		private CancellationTokenSource _ctSource;
 
 		[TestInitialize]
@@ -16,13 +17,10 @@ namespace Yllibed.HttpServer.Tests
 			_ctSource = Debugger.IsAttached
 				? new CancellationTokenSource()
 				: new CancellationTokenSource(TimeSpan.FromSeconds(10));
-			_ct = _ctSource.Token;
+			CT = _ctSource.Token;
 		}
 
 		[TestCleanup]
-		public void Terminate()
-		{
-			_ctSource.Dispose();
-		}
+		public void Terminate() => _ctSource.Dispose();
 	}
 }

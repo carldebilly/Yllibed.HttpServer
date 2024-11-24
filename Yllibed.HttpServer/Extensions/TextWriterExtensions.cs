@@ -2,7 +2,7 @@
 using System.IO;
 using System.Threading.Tasks;
 
-namespace Yllibed.Framework.Extensions
+namespace Yllibed.HttpServer.Extensions
 {
 	public static class TextWriterExtensions
 	{

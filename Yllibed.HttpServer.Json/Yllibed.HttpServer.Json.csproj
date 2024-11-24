@@ -1,33 +1,17 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
 	<PropertyGroup>
-		<TargetFrameworks>netstandard1.4;net46</TargetFrameworks>
-		<AssemblyName>Yllibed.HttpServer.Json</AssemblyName>
-		<RootNamespace>Yllibed.HttpServer.Json</RootNamespace>
-		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-		<MinimumVisualStudioVersion>15</MinimumVisualStudioVersion>
-		<Company>Carl de Billy</Company>
 		<Product>Yllibed HttpServer Json Adapter</Product>
-		<Authors>Carl de Billy</Authors>
 		<Description>Json adapter for Yllibed Versatile Http Server using Newtownsoft JSON.NET</Description>
-		<Copyright>Copyright (C) 2017 - Carl de Billy - All Rights Reserved</Copyright>
-		<OutputType>library</OutputType>
-		<PackageLicenseUrl>https://github.com/carldebilly/Yllibed.HttpServer/blob/master/LICENSE.txt</PackageLicenseUrl>
-		<RepositoryUrl>https://github.com/carldebilly/Yllibed.HttpServer</RepositoryUrl>
-		<PackageTags>Http Server UWP JSON</PackageTags>
+
+		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 	</PropertyGroup>
 
-	<ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.4' ">
-		<PackageReference Include="NETStandard.Library" Version="1.6.1" />
-	</ItemGroup>
-
 	<ItemGroup>
-	  <PackageReference Include="Newtonsoft.Json" Version="10.0.2" />
-	  <PackageReference Include="System.ValueTuple" Version="4.3.0" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<ProjectReference Include="..\Yllibed.Framework\Yllibed.Framework.csproj" />
 		<ProjectReference Include="..\Yllibed.HttpServer\Yllibed.HttpServer.csproj" />
 	</ItemGroup>
+
+	<ItemGroup>
+	  <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+	</ItemGroup>
+
 </Project>

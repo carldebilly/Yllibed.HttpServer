@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Net;
 using System.Net.Http;
-using System.Reactive.Concurrency;
 using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
@@ -15,45 +14,37 @@ namespace Yllibed.HttpServer.Json.Tests
 	public class JsonHandlerBaseFixture : FixtureBase
 	{
 		[TestMethod]
-		public async Task TestSimpleGet_WithNancyEngine()
+		public async Task TestSimpleGet_WithJsonHandler()
 		{
-			using (var scheduler = new EventLoopScheduler())
+			var server = new Server();
+
+			var (uri4, uri6) = server.Start();
+			var requestUri = uri4 + "abcd?a=1&b=%20%2020";
+
+			var sut = new MyJsonHandler("GET", "abcd");
+
+			using (server.RegisterHandler(sut))
 			{
-				var server = new HttpServer(scheduler: scheduler);
-
-				var serverUri = await server.GetRootUri(_ct);
-				var requestUri = serverUri + "abcd?a=1&b=%20%2020";
-
-				var sut = new MyJsonHandler("GET", "abcd");
-
-				using (server.RegisterHandler(sut))
+				using (var client = new HttpClient())
 				{
-					using (var client = new HttpClient())
-					{
-						var response = await client.GetAsync(requestUri, _ct);
-						response.StatusCode.Should().Be(HttpStatusCode.OK);
+					var response = await client.GetAsync(requestUri, CT);
+					response.StatusCode.Should().Be(HttpStatusCode.OK);
 
-						var result = JsonConvert.DeserializeObject<MyResultPayload>(await response.Content.ReadAsStringAsync());
-						result.Should().NotBeNull();
-						result.A.ShouldBeEquivalentTo("1");
-						result.B.ShouldBeEquivalentTo("  20");
-					}
+					var result = JsonConvert.DeserializeObject<MyResultPayload>(await response.Content.ReadAsStringAsync(CT));
+					result.Should().NotBeNull();
+					result.Should().BeEquivalentTo(new { A = "1", B = "  20" });
 				}
 			}
 		}
 
 		public class MyResultPayload
 		{
-			public string A { get; set; }
-			public string B { get; set; }
+			public string? A { get; set; }
+			public string? B { get; set; }
 		}
 
-		internal class MyJsonHandler : JsonHandlerBase<MyResultPayload>
+		private sealed class MyJsonHandler(string method, string path) : JsonHandlerBase<MyResultPayload>(method, path)
 		{
-			public MyJsonHandler(string method, string path) : base(method, path)
-			{
-			}
-
 			protected override async Task<(MyResultPayload result, ushort statusCode)> ProcessRequest(CancellationToken ct, string relativePath, IDictionary<string, string[]> queryParameters)
 			{
 				queryParameters.TryGetValue("a", out var a);
@@ -64,7 +55,7 @@ namespace Yllibed.HttpServer.Json.Tests
 				var result = new MyResultPayload
 				{
 					A = a?.FirstOrDefault(),
-					B = b?.FirstOrDefault()
+					B = b?.FirstOrDefault(),
 				};
 
 				return (result, 200);

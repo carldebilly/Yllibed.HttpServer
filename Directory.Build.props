@@ -1,0 +1,39 @@
+<Project>
+	<PropertyGroup>
+		<IsTestProject Condition="'$(MsTestToolsTargets)'==''">false</IsTestProject>
+		<IsTestProject Condition="'$(IsTestProject)'==''">true</IsTestProject>
+		
+		<!-- Supported Platforms -->
+		<TargetFrameworks Condition="'$(IsTestProject)'!='true'">netstandard2.0;net8.0;net9.0</TargetFrameworks>
+		<TargetFramework Condition="'$(IsTestProject)'=='true'">dotnet9</TargetFramework>
+
+		<!-- General properties -->
+		<Company>Carl de Billy</Company>
+		<Product>Yllibed HttpServer</Product>
+		<Authors>Carl de Billy</Authors>
+		<Copyright Condition="'$(Copyright)'==''">Copyright (C) 2017-$([System.DateTime]::Now.ToString(`yyyy`)) Carl de Billy - all rights reserved</Copyright>
+		<RepositoryUrl>https://github.com/carldebilly/Yllibed.HttpServer</RepositoryUrl>
+		<RepositoryType>git</RepositoryType>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		
+		<!-- General build properties -->
+		<Nullable>enable</Nullable>
+		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+		<DebugType>portable</DebugType>
+		<DebugSymbols>true</DebugSymbols>
+		<LangVersion>12</LangVersion>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="9.0.0">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All"/>
+		<PackageReference Include="DotNet.ReproducibleBuilds" Version="1.2.25" PrivateAssets="All" />
+		<PackageReference Include="Meziantou.Analyzer" Version="2.0.180">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+	</ItemGroup>
+</Project>
