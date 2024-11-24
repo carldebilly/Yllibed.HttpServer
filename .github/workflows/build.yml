@@ -43,6 +43,7 @@ jobs:
                   path: nuget-packages/
 
             - name: Test
+              #run: dotnet test Yllibed.HttpServer.sln /p:Configuration=Release /p:CollectCoverage=true /p:CoverletOutputFormat=opencover --no-build
               run: dotnet test Yllibed.HttpServer.sln /p:Configuration=Release --no-build
 
     publish:
