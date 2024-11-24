@@ -10,7 +10,6 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{0A711B14-A668-4751-AEBF-0BB97641C432}"
 	ProjectSection(SolutionItems) = preProject
 		Directory.Build.props = Directory.Build.props
-		gitversion.yml = gitversion.yml
 		README.md = README.md
 		.editorconfig = .editorconfig
 		.github\workflows\build.yml = .github\workflows\build.yml

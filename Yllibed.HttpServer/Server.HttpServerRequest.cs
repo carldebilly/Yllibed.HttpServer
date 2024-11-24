@@ -241,7 +241,7 @@ public sealed partial class Server
 			}
 		}
 
-		private static readonly char[] HeaderSeparator = {':'};
+		private static readonly char[] HeaderSeparator = [':'];
 
 		private (string? header, string? content) ParseHeader(string line)
 		{

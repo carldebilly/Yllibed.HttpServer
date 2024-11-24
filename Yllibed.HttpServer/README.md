@@ -15,4 +15,3 @@ Limitations:
 * There is no support for HTTPS (TLS)
 * This HTTP server is not designed for performance or high capacity
 * It's perfect for small applications, or small need
-* 

@@ -18,7 +18,7 @@ This is a versatile http server designed to be used in mobile/UWP applications.
 2. Register a server in your app:
    ```csharp
     var myServer = new Server(8080); // create a web server on port 8080
-    myServer.RegisterHandler(new StaticHandler(""));
+    myServer.RegisterHandler(new StaticHandler("/", "text/plain", "Hello, world!")); // register a handler for the root
     var (uri4, uri6) = myServer.Start(); // start the server and get the URIs
    ```
 
