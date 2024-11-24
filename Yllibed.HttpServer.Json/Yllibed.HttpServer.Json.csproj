@@ -4,10 +4,13 @@
 		<Description>Json adapter for Yllibed Versatile Http Server using Newtownsoft JSON.NET</Description>
 
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
 	</PropertyGroup>
 
 	<ItemGroup>
 		<ProjectReference Include="..\Yllibed.HttpServer\Yllibed.HttpServer.csproj" />
+
+		<None Include="README.md" Pack="true" PackagePath="/" />
 	</ItemGroup>
 
 	<ItemGroup>

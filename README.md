@@ -3,9 +3,9 @@ This is a versatile http server designed to be used in mobile/UWP applications.
 
 Last build state (master): ![](https://carldebilly.visualstudio.com/_apis/public/build/definitions/66b77220-645e-4483-808e-0e5a63ea38ff/1/badge)
 
-| Package |  Build | Nuget |
-| -- | -- | -- |
-| Yllibed.HttpServer - stable | ![VSTS Build](https://carldebilly.visualstudio.com/_apis/public/build/definitions/66b77220-645e-4483-808e-0e5a63ea38ff/1/badge) | [![NuGet Status](http://img.shields.io/nuget/v/Yllibed.HttpServer.svg?style=flat)](https://www.nuget.org/packages/Yllibed.HttpServer/) |
+| Package | Build                                                                                                    | Nuget |
+| -- |----------------------------------------------------------------------------------------------------------| -- |
+| Yllibed.HttpServer - stable | ![Build Status](https://github.com/carldebilly/Yllibed.HttpServer/actions/workflows/build.yml/badge.svg) | [![NuGet Status](http://img.shields.io/nuget/v/Yllibed.HttpServer.svg?style=flat)](https://www.nuget.org/packages/Yllibed.HttpServer/) |
 
 ## Quick start-up
 
