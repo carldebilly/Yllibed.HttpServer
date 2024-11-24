@@ -9,11 +9,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Yllibed.HttpServer.Tests", 
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{0A711B14-A668-4751-AEBF-0BB97641C432}"
 	ProjectSection(SolutionItems) = preProject
-		build.proj = build.proj
 		Directory.Build.props = Directory.Build.props
 		gitversion.yml = gitversion.yml
 		README.md = README.md
 		.editorconfig = .editorconfig
+		.github\workflows\build.yml = .github\workflows\build.yml
+		version.json = version.json
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Yllibed.HttpServer.Json", "Yllibed.HttpServer.Json\Yllibed.HttpServer.Json.csproj", "{460C757A-BCD7-4EA1-91DA-3EE252F39C83}"

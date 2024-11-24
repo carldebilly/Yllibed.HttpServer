@@ -26,5 +26,21 @@ jobs:
               with:
                   dotnet-version: '9.0'
 
-            - name: Run MSBuild
-              run: msbuild build.proj /p:PublicRelease=true /p:Configuration=Release
+            - name: Build
+              run: dotnet build Yllibed.HttpServer.sln /p:Configuration=Release
+
+            - name: Collect NuGet packages
+              shell: pwsh
+              run: |
+                  $OutputDir = "nuget-packages"
+                  New-Item -ItemType Directory -Force -Path $OutputDir
+                  Get-ChildItem -Path . -Recurse -Filter *.nupkg | Copy-Item -Destination $OutputDir
+
+            - name: Upload NuGet packages as artifacts
+              uses: actions/upload-artifact@v3
+              with:
+                  name: nuget-packages
+                  path: nuget-packages/
+
+            - name: Test
+              run: dotnet test Yllibed.HttpServer.sln /p:Configuration=Release --no-build

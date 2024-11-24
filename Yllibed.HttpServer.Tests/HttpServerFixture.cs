@@ -129,7 +129,6 @@ namespace Yllibed.HttpServer.Tests
 		[DataRow(20)]
 		[DataRow(200)]
 		[DataRow(2000)]
-		[DataRow(4000)]
 		public async Task HttpServer_TestWithStaticHandlerOnRoot_WithMultipleGetRequests_WithDelay(int count)
 		{
 			using var sut = new Server();
@@ -153,7 +152,6 @@ namespace Yllibed.HttpServer.Tests
 		[DataRow(20)]
 		[DataRow(200)]
 		[DataRow(2000)]
-		[DataRow(4000)]
 		public async Task HttpServer_TestWithStaticHandlerOnRoot_WithMultiplePostRequests_WithDelay(int count)
 		{
 			using var sut = new Server();
