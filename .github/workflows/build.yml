@@ -1,0 +1,46 @@
+name: Build and Restore
+
+on:
+    push:
+        branches:
+            - master
+    pull_request:
+
+jobs:
+    build:
+        runs-on: windows-latest
+
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v3
+              with:
+                  fetch-depth: 0 # Need full history for GitVersion
+
+            - name: Setup .NET
+              uses: actions/setup-dotnet@v3
+              with:
+                  dotnet-version: '8.0'
+
+            - name: Setup .NET
+              uses: actions/setup-dotnet@v3
+              with:
+                  dotnet-version: '9.0'
+
+            - name: Build
+              run: dotnet build Yllibed.HttpServer.sln /p:Configuration=Release
+
+            - name: Collect NuGet packages
+              shell: pwsh
+              run: |
+                  $OutputDir = "nuget-packages"
+                  New-Item -ItemType Directory -Force -Path $OutputDir
+                  Get-ChildItem -Path . -Recurse -Filter *.nupkg | Copy-Item -Destination $OutputDir
+
+            - name: Upload NuGet packages as artifacts
+              uses: actions/upload-artifact@v3
+              with:
+                  name: nuget-packages
+                  path: nuget-packages/
+
+            - name: Test
+              run: dotnet test Yllibed.HttpServer.sln /p:Configuration=Release --no-build

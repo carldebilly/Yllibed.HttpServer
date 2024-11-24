@@ -1,24 +1,20 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.26430.6
+# Visual Studio Version 17
+VisualStudioVersion = 17.12.35514.174 d17.12
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Yllibed.HttpServer", "Yllibed.HttpServer\Yllibed.HttpServer.csproj", "{8D21CD92-C0E8-478A-867C-2D07A02879D5}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Yllibed.HttpServer.Tests", "Yllibed.HttpServer.Tests\Yllibed.HttpServer.Tests.csproj", "{D558F35B-2335-4DA1-BC07-338EEA7EA4AF}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Yllibed.HttpServer.Nancy", "Yllibed.HttpServer.Nancy\Yllibed.HttpServer.Nancy.csproj", "{E2FC8192-F6AC-4286-93B0-5280E6760A39}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Yllibed.Framework", "Yllibed.Framework\Yllibed.Framework.csproj", "{29F399D8-76F4-4E58-8B06-428F2E57869D}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Yllibed.HttpServer.Nancy.Tests", "Yllibed.HttpServer.Nancy.Tests\Yllibed.HttpServer.Nancy.Tests.csproj", "{202B0F2A-CEC4-44A8-A3D1-18EB5E749AEB}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{0A711B14-A668-4751-AEBF-0BB97641C432}"
 	ProjectSection(SolutionItems) = preProject
-		build.proj = build.proj
+		Directory.Build.props = Directory.Build.props
 		gitversion.yml = gitversion.yml
-		LICENSE.txt = LICENSE.txt
 		README.md = README.md
+		.editorconfig = .editorconfig
+		.github\workflows\build.yml = .github\workflows\build.yml
+		version.json = version.json
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Yllibed.HttpServer.Json", "Yllibed.HttpServer.Json\Yllibed.HttpServer.Json.csproj", "{460C757A-BCD7-4EA1-91DA-3EE252F39C83}"
@@ -39,18 +35,6 @@ Global
 		{D558F35B-2335-4DA1-BC07-338EEA7EA4AF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D558F35B-2335-4DA1-BC07-338EEA7EA4AF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D558F35B-2335-4DA1-BC07-338EEA7EA4AF}.Release|Any CPU.Build.0 = Release|Any CPU
-		{E2FC8192-F6AC-4286-93B0-5280E6760A39}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E2FC8192-F6AC-4286-93B0-5280E6760A39}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E2FC8192-F6AC-4286-93B0-5280E6760A39}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E2FC8192-F6AC-4286-93B0-5280E6760A39}.Release|Any CPU.Build.0 = Release|Any CPU
-		{29F399D8-76F4-4E58-8B06-428F2E57869D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{29F399D8-76F4-4E58-8B06-428F2E57869D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{29F399D8-76F4-4E58-8B06-428F2E57869D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{29F399D8-76F4-4E58-8B06-428F2E57869D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{202B0F2A-CEC4-44A8-A3D1-18EB5E749AEB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{202B0F2A-CEC4-44A8-A3D1-18EB5E749AEB}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{202B0F2A-CEC4-44A8-A3D1-18EB5E749AEB}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{202B0F2A-CEC4-44A8-A3D1-18EB5E749AEB}.Release|Any CPU.Build.0 = Release|Any CPU
 		{460C757A-BCD7-4EA1-91DA-3EE252F39C83}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{460C757A-BCD7-4EA1-91DA-3EE252F39C83}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{460C757A-BCD7-4EA1-91DA-3EE252F39C83}.Release|Any CPU.ActiveCfg = Release|Any CPU
