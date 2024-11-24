@@ -43,7 +43,7 @@ jobs:
                   path: nuget-packages/
 
             - name: Test
-              run: dotnet test Yllibed.HttpServer.sln /p:Configuration=Release --no-build
+              run: dotnet test Yllibed.HttpServer.sln /p:CollectCoverage=true /p:CoverletOutputFormat=opencover --no-build
 
     publish:
         if: github.ref == 'refs/heads/master' # Only on master branch (non-dev)
