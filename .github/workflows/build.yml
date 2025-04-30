@@ -17,12 +17,12 @@ jobs:
               with:
                   fetch-depth: 0 # Need full history for GitVersion
 
-            - name: Setup .NET
+            - name: Setup .NET 8.0
               uses: actions/setup-dotnet@v3
               with:
                   dotnet-version: '8.0'
 
-            - name: Setup .NET
+            - name: Setup .NET 9.0
               uses: actions/setup-dotnet@v3
               with:
                   dotnet-version: '9.0'
@@ -50,7 +50,8 @@ jobs:
               run: dotnet test Yllibed.HttpServer.sln /p:Configuration=Release --no-build
 
     publish:
-        if: github.ref == 'refs/heads/master' # Only on master branch (non-dev)
+        if: startsWith(github.ref, 'refs/heads/master')
+        # || startsWith(github.ref, 'refs/heads/release/')
         needs: build
         runs-on: ubuntu-latest
 
