@@ -2,7 +2,7 @@ using System;
 
 namespace Yllibed.HttpServer.Extensions;
 
-public static class Disposable
+internal static class Disposable
 {
 	private sealed class DisposableAction : IDisposable
 	{

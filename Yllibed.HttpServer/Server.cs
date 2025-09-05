@@ -24,6 +24,7 @@ public sealed partial class Server : IHttpServer, IDisposable
 {
 	private const uint BufferSize = 8192;
 	private readonly ushort _localPort;
+	private readonly ServerOptions _options;
 
 	private readonly CancellationTokenSource _cts = new CancellationTokenSource();
 
@@ -46,7 +47,38 @@ public sealed partial class Server : IHttpServer, IDisposable
 	/// Not specifying a port will use a dynamic port assigned by the system.
 	/// </remarks>
 	/// <param name="localPort">Port number to listen to.  0=dynamic.</param>
-	public Server(ushort localPort = 0) => _localPort = localPort;
+	public Server(ushort localPort)
+	{
+		_localPort = localPort;
+		_options = new ServerOptions { Port = localPort };
+	}
+
+	/// <summary>
+	/// Create a new server with default settings (dynamic port).
+	/// </summary>
+	public Server() : this(localPort: 0)
+	{
+	}
+
+	/// <summary>
+	/// Create a new server with explicit options.
+	/// </summary>
+	/// <param name="options">Server options.</param>
+	public Server(ServerOptions options)
+	{
+		_options = options ?? new ServerOptions();
+		_localPort = _options.Port;
+	}
+
+	/// <summary>
+	/// Create a new server with options resolved via Microsoft.Extensions.Options.
+	/// </summary>
+	/// <param name="options">A wrapper around <see cref="ServerOptions"/>.</param>
+	[Microsoft.Extensions.DependencyInjection.ActivatorUtilitiesConstructor]
+	public Server(Microsoft.Extensions.Options.IOptions<ServerOptions> options)
+		: this(options?.Value ?? new ServerOptions())
+	{
+	}
 
 	private async Task HandleRequest(CancellationToken ct, HttpServerRequest request)
 	{
@@ -77,7 +109,10 @@ public sealed partial class Server : IHttpServer, IDisposable
 
 	private (Uri Uri4, Uri Uri6) Initialize()
 	{
-		var tcpListener4 = new TcpListener(IPAddress.Any, _localPort);
+		var bind4 = _options?.BindAddress4 ?? IPAddress.Any;
+		var bind6 = _options?.BindAddress6 ?? IPAddress.IPv6Any;
+
+		var tcpListener4 = new TcpListener(bind4, _localPort);
 		tcpListener4.Start();
 
 		// Tentatively use the same port for IPv6
@@ -86,11 +121,11 @@ public sealed partial class Server : IHttpServer, IDisposable
 			? localPort4
 			: _localPort;
 
-		var tcpListener6 = new TcpListener(IPAddress.IPv6Any, localPort6);
+		var tcpListener6 = new TcpListener(bind6, localPort6);
 		tcpListener6.Start();
 
-		const string hostname4 = "127.0.0.1";
-		const string hostname6 = "::1";
+		var hostname4 = _options?.Hostname4 ?? "127.0.0.1";
+		var hostname6 = _options?.Hostname6 ?? "::1";
 
 		var uri4 = new Uri($"http://{hostname4}:{localPort4}");
 		var uri6 = new Uri($"http://[{hostname6}]:{localPort6}");
