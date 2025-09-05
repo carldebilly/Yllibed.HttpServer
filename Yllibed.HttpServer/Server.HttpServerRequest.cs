@@ -22,8 +22,7 @@ public sealed partial class Server
 	private sealed class HttpServerRequest : IDisposable, IHttpServerRequest
 	{
 		private readonly TcpClient _tcpClient;
-		private readonly CancellationToken _ct;
-		private Func<HttpServerRequest, CancellationToken, Task> _onReady;
+		private readonly Func<HttpServerRequest, CancellationToken, Task> _onReady;
 		private readonly Action _onCompletedOrDisconnected;
 
 		private static long NextRequestId = 0;
@@ -39,11 +38,10 @@ public sealed partial class Server
 			_tcpClient = tcpClient;
 			_onReady = onReady;
 			_onCompletedOrDisconnected = onCompletedOrDisconnected;
-			_ct = ct;
 
 			Port = port;
 
-			_ = ProcessConnection(_ct);
+			_ = ProcessConnection(ct);
 		}
 
 		private async Task ProcessConnection(CancellationToken ct)
@@ -89,10 +87,10 @@ public sealed partial class Server
 		{
 			var encoding = GetRequestEncoding();
 
-			using var requestReader = new StreamReader(stream, encoding, detectEncodingFromByteOrderMarks: true, (int) BufferSize, leaveOpen: true);
+			using var requestReader = new StreamReader(stream, encoding, detectEncodingFromByteOrderMarks: true, (int)BufferSize, leaveOpen: true);
 			var requestLine = await requestReader.ReadLineAsync().ConfigureAwait(true);
 			var requestLineParts = requestLine?.Split(' ');
-			if (requestLineParts is not {Length: 3})
+			if (requestLineParts is not { Length: 3 })
 			{
 				throw new InvalidOperationException("Invalid request line");
 			}
@@ -146,7 +144,7 @@ public sealed partial class Server
 		private Encoding GetRequestEncoding()
 		{
 			if (ContentType is { Length: > 0 }
-			    && ContentTypeCharsetRegex.Match(ContentType) is { Success: true } match)
+				&& ContentTypeCharsetRegex.Match(ContentType) is { Success: true } match)
 			{
 				try
 				{
@@ -163,7 +161,7 @@ public sealed partial class Server
 
 		private async Task ProcessResponse(CancellationToken ct, NetworkStream stream)
 		{
-			using var responseWriter = new StreamWriter(stream, Utf8, (int) BufferSize, leaveOpen: true);
+			using var responseWriter = new StreamWriter(stream, Utf8, (int)BufferSize, leaveOpen: true);
 			responseWriter.NewLine = "\r\n";
 
 			await ProcessResponseHeader(responseWriter).ConfigureAwait(true);
