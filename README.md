@@ -260,3 +260,106 @@ var serverOptions = new ServerOptions
     Hostname6 = "::1"                   // IPv6 loopback
 };
 ```
+
+
+## Server-Sent Events (SSE)
+SSE lets your server push a continuous stream of text events over a single HTTP response. This project now provides a minimal SSE path without chunked encoding: headers are sent, then the connection stays open while your code writes events; closing the connection ends the stream.
+
+- Content-Type: text/event-stream
+- Cache-Control: no-cache is added by default
+- Connection: close is still set by the server; the connection remains open until your writer completes
+
+Quick example (application code):
+
+```csharp
+// Register a handler for /sse (very basic example)
+public sealed class SseDemoHandler : IHttpHandler
+{
+    public Task HandleRequest(CancellationToken ct, IHttpServerRequest request, string relativePath)
+    {
+        if (!string.Equals(request.Method, "GET", StringComparison.OrdinalIgnoreCase)) return Task.CompletedTask;
+        if (!string.Equals(relativePath, "/sse", StringComparison.Ordinal)) return Task.CompletedTask;
+
+        request.StartSseSession(RunSseSession,
+            headers: new Dictionary<string, IReadOnlyCollection<string>>
+            {
+                ["Access-Control-Allow-Origin"] = new[] { "*" } // if you need CORS
+            },
+            options: new SseOptions
+            {
+                HeartbeatInterval = TimeSpan.FromSeconds(30),
+                HeartbeatComment = "keepalive",
+                AutoFlush = true
+            });
+        return Task.CompletedTask;
+    }
+
+    private async Task RunSseSession(ISseSession sse, CancellationToken ct)
+    {
+        // Optional: initial comment
+        await sse.SendCommentAsync("start", ct);
+
+        var i = 0;
+        while (!ct.IsCancellationRequested && i < 10)
+        {
+            // Write an event every second
+            await sse.SendEventAsync($"{DateTimeOffset.UtcNow:O}", eventName: "tick", id: i.ToString(), ct: ct);
+            await Task.Delay(TimeSpan.FromSeconds(1), ct);
+            i++;
+        }
+    }
+}
+
+// Usage during startup
+var server = new Server();
+var ssePath = new RelativePathHandler("/");
+ssePath.RegisterHandler(new SseDemoHandler());
+server.RegisterHandler(ssePath);
+var (uri4, _) = server.Start();
+Console.WriteLine($"SSE endpoint: {uri4}/sse");
+```
+
+SseHandler convenience base class:
+```csharp
+public sealed class MySseHandler : SseHandler
+{
+    protected override bool ShouldHandle(IHttpServerRequest request, string relativePath)
+        => base.ShouldHandle(request, relativePath) && relativePath is "/sse";
+
+    protected override Task HandleSseSession(ISseSession sse, CancellationToken ct)
+        => RunSseSession(sse, ct); // Reuse the same private method as above
+}
+
+// Registration
+var server = new Server();
+var ssePath = new RelativePathHandler("/updates");
+ssePath.RegisterHandler(new MySseHandler());
+server.RegisterHandler(ssePath);
+```
+
+Client-side (browser):
+```html
+<script>
+  const es = new EventSource('/updates/sse');
+  es.addEventListener('tick', e => console.log('tick', e.data));
+  es.onmessage = e => console.log('message', e.data);
+  es.onerror = e => console.warn('SSE error', e);
+</script>
+```
+
+Notes:
+- Heartbeats: send a comment frame (": keepalive\n\n") every 15–30s to prevent proxy timeouts.
+- Long-running streams: handle CancellationToken to stop cleanly when the client disconnects.
+- Browser connection limits: most browsers cap concurrent HTTP connections per hostname (often 6–15). Without HTTP/2 multiplexing, a single client cannot keep many SSE connections in parallel; this server is not intended for a large number of per-client connections.
+- Public exposure: there is no TLS; prefer localhost or internal networks, or place behind a TLS-terminating reverse proxy.
+
+
+### SSE Spec and Interop Notes
+- Accept negotiation: If a client sends an Accept header that explicitly excludes SSE (text/event-stream), the default SseHandler will reply 406 Not Acceptable. The following values are considered acceptable: text/event-stream, text/*, or */*. If no Accept header is present, requests are accepted. You can override this behavior by overriding ShouldHandle in your handler.
+- Last-Event-ID: When a client reconnects, browsers may send a Last-Event-ID header. It is exposed via ISseSession.LastEventId so you can resume from the last delivered event. Set the id parameter in SendEventAsync to help clients keep position.
+- Heartbeats: You can configure periodic comment frames via SseOptions.HeartBeatInterval; this keeps intermediaries from timing out idle connections.
+- Framing: The server uses CRLF (\r\n) in headers and LF (\n) in the SSE body as recommended by typical SSE implementations. Data payloads are normalized to LF before framing each data: line. Each event ends with a blank line.
+- Connection and length: The server does not send Content-Length for streaming SSE responses and relies on connection close to delimit the body (HTTP/1.1 close-delimited). The response header includes Connection: close.
+- Caching: Cache-Control: no-cache is added by default for SSE responses unless you override it via headers.
+- Retry: The SSE spec allows the server to send a retry: <milliseconds> field to suggest a reconnection delay. This helper does not currently provide a dedicated API for retry frames. Most clients also implement their own backoff. If you need this, you can write raw lines through a custom handler or open an issue.
+- CORS: If you need cross-origin access, add appropriate headers (e.g., Access-Control-Allow-Origin) via the headers parameter when starting the SSE session.

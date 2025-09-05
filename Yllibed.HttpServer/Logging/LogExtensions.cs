@@ -1,6 +1,4 @@
-﻿using Microsoft.Extensions.Logging;
-
-namespace Yllibed.Framework.Logging;
+﻿namespace Yllibed.Framework.Logging;
 
 public static class LogExtensions
 {

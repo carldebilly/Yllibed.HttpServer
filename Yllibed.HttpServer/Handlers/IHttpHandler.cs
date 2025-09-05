@@ -1,11 +1,7 @@
-using System;
-using System.Threading;
-using System.Threading.Tasks;
-
 namespace Yllibed.HttpServer.Handlers;
 
 /// <summary>
-/// This is the interface who should be implemented by a Http Server Handler.
+/// This is the interface that should be implemented by a Http Server Handler.
 /// </summary>
 /// <remarks>
 /// The handler should check if the request is "interesting" and produce a result.

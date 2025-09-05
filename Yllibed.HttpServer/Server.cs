@@ -1,13 +1,7 @@
-﻿using System;
-using System.Collections.Immutable;
+﻿using System.Collections.Immutable;
 using System.Net;
 using System.Net.Sockets;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
 using Yllibed.Framework.Logging;
-using Yllibed.HttpServer.Extensions;
 using Yllibed.HttpServer.Handlers;
 
 #pragma warning disable MA0040 // Don't force using ct (netstd2.0 limitations)

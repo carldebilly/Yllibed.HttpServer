@@ -1,5 +1,3 @@
-using System;
-
 namespace Yllibed.HttpServer.Extensions;
 
 internal static class Disposable

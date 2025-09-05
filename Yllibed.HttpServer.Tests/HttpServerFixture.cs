@@ -1,14 +1,4 @@
-﻿using System;
-using System.ComponentModel.Design;
-using System.Net;
-using System.Net.Http;
-using System.Threading;
-using System.Threading.Tasks;
-using FluentAssertions;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Yllibed.HttpServer.Handlers;
-
-namespace Yllibed.HttpServer.Tests;
+﻿namespace Yllibed.HttpServer.Tests;
 
 [TestClass]
 public class HttpServerFixture : FixtureBase

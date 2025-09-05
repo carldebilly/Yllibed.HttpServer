@@ -6,7 +6,7 @@
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 
-		<InternalsVisibleTo>$(InternalsVisibleTo);Yllibed.HttpServer.Json</InternalsVisibleTo>
+		<InternalsVisibleTo>$(InternalsVisibleTo);Yllibed.HttpServer.Json;Yllibed.HttpServer.Tests</InternalsVisibleTo>
 	</PropertyGroup>
 
 	<ItemGroup>

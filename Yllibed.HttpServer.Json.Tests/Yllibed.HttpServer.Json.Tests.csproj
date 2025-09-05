@@ -5,6 +5,7 @@
 		<GenerateProgramFile>false</GenerateProgramFile>
 		<IsPublishable>False</IsPublishable>
 		<IsPackable>false</IsPackable>
+		<ImplicitUsings>enable</ImplicitUsings>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -29,5 +30,7 @@
 	<ItemGroup>
 	  <ProjectReference Include="..\Yllibed.HttpServer.Json\Yllibed.HttpServer.Json.csproj" />
 	  <ProjectReference Include="..\Yllibed.HttpServer\Yllibed.HttpServer.csproj" />
+
+	  <Compile Include="..\Yllibed.HttpServer.Tests\SseTestClient.cs" Link="Shared\SseTestClient.cs" />
 	</ItemGroup>
 </Project>
