@@ -1,15 +1,25 @@
 # Yllibed HttpServer
 
-This is a versatile http server designed to be used in mobile/UWP applications and any applications which need to expose a simple web server.
+![Yllibed logo](Yllibed-small.png)
 
-## Packages and NuGet Statistics
+A small, self-contained HTTP server for desktop, mobile, and embedded apps that need to expose a simple web endpoint.
 
-| Package                                                                                   | Downloads                                                                                      | Stable Version                                                                                         | Pre-release Version                                                                                     |
-|-------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------|
-| [**HttpServer**](https://www.nuget.org/packages/Yllibed.HttpServer/)                      | ![Downloads](https://img.shields.io/nuget/dt/Yllibed.HttpServer?label=Downloads)              | ![Stable](https://img.shields.io/nuget/v/Yllibed.HttpServer?label=Stable&labelColor=blue)              | ![Pre-release](https://img.shields.io/nuget/vpre/Yllibed.HttpServer?label=Pre-release&labelColor=yellow)           |
-| [**HttpServer.Json**](https://www.nuget.org/packages/Yllibed.HttpServer.Json/)            | ![Downloads](https://img.shields.io/nuget/dt/Yllibed.HttpServer.Json?label=Downloads)         | ![Stable](https://img.shields.io/nuget/v/Yllibed.HttpServer.Json?label=Stable&labelColor=blue)         | ![Pre-release](https://img.shields.io/nuget/vpre/Yllibed.HttpServer.Json?label=Pre-release&labelColor=yellow)       |
+- Lightweight, no ASP.NET dependency
+- Great for OAuth2 redirect URIs, diagnostics, and local tooling
+- IPv4/IPv6, HTTP/1.1, custom handlers, static files, and SSE
 
-## Quick start-up
+---
+
+## Packages and NuGet
+
+| Package | Downloads | Stable | Pre-release |
+|---|---|---|---|
+| [Yllibed.HttpServer](https://www.nuget.org/packages/Yllibed.HttpServer/) | ![Downloads](https://img.shields.io/nuget/dt/Yllibed.HttpServer?label=downloads) | ![Stable](https://img.shields.io/nuget/v/Yllibed.HttpServer?label=stable) | ![Pre-release](https://img.shields.io/nuget/vpre/Yllibed.HttpServer?label=pre-release) |
+| [Yllibed.HttpServer.Json](https://www.nuget.org/packages/Yllibed.HttpServer.Json/) | ![Downloads](https://img.shields.io/nuget/dt/Yllibed.HttpServer.Json?label=downloads) | ![Stable](https://img.shields.io/nuget/v/Yllibed.HttpServer.Json?label=stable) | ![Pre-release](https://img.shields.io/nuget/vpre/Yllibed.HttpServer.Json?label=pre-release) |
+
+---
+
+## Quick start
 
 1. First install nuget package:
 	```shell
@@ -49,36 +59,44 @@ This is a versatile http server designed to be used in mobile/UWP applications a
    ```
 
 ## What it is
-* Simple web server which can be extended using custom code
-* No dependencies on ASP.NET or other frameworks, self-contained
+
+- Simple web server that can be extended with custom code
+- No dependencies on ASP.NET or other frameworks; fully self-contained
+- Intended for small apps and utilities (e.g., OAuth2 redirect URL from an external browser)
 
 ## What it is not
-* This HTTP server is not designed for performance or high capacity
-* It's perfect for small applications, or small need, like to act as _return url_ for OAuth2 authentication using external browser.
+
+- NOT designed for high performance or high concurrency
+- NOT appropriate for public-facing web services
+- NOT a full-featured web framework (no MVC, no Razor, no routing, etc.)
+- NOT a replacement for ASP.NET Core or Kestrel
 
 ## Features
-* Simple, lightweight, self-contained HTTP server
-* Supports IPv4 and IPv6
-* Supports HTTP 1.1 (limited: no keep-alive, no chunked encoding)
-* Supports GET, POST, PUT, DELETE, HEAD, OPTIONS, TRACE, PATCH - even custom methods
-* Supports static files
-* Supports custom headers
-* Supports custom status codes
-* Supports custom content types
-* Supports custom content encodings
-* Supports dependency injection and configuration via `IOptions<ServerOptions>`
-* Configurable bind addresses and hostnames for IPv4/IPv6
-* Supports dynamic port assignment
+
+- Simple, lightweight, self-contained HTTP server
+- Supports IPv4 and IPv6
+- Supports HTTP 1.1 (limited: no keep-alive, no chunked encoding)
+- Allows any HTTP method (GET, POST, PUT, DELETE, HEAD, OPTIONS, TRACE, PATCH, custom). Handlers decide how to handle them.
+- Simple static responses via StaticHandler (no built-in file/directory serving)
+- Supports custom headers
+- Supports custom status codes
+- Supports custom content types
+- Arbitrary response headers (incl. Content-Encoding); no automatic compression/encoding
+- Supports dependency injection and configuration via `IOptions<ServerOptions>`
+- Configurable bind addresses and hostnames for IPv4/IPv6
+- Supports dynamic port assignment
 
 ## Common use cases
-* Return URL for OAuth2 authentication using external browser
-* Remote diagnostics/monitoring on your app
-* Building a headless Windows IoT app (for SSDP discovery or simply end-user configuration)
-* Any other use case where you need to expose a simple web server
+
+- Return URL for OAuth2 authentication using external browser
+- Remote diagnostics/monitoring on your app
+- Building a headless Windows IoT app (for SSDP discovery or simply end-user configuration)
+- Any other use case where you need to expose a simple web server
 
 ## Limitations
-* There is no support for HTTP 2.0+ (yet) or WebSockets
-* There is no support for HTTPS (TLS)
+
+- There is no support for HTTP/2+ (yet) or WebSockets
+- There is no support for HTTPS (TLS)
 
 ## Security and Intended Use (No TLS)
 This server uses plain HTTP with no transport encryption. It is primarily intended for:
@@ -260,3 +278,106 @@ var serverOptions = new ServerOptions
     Hostname6 = "::1"                   // IPv6 loopback
 };
 ```
+
+
+## Server-Sent Events (SSE)
+SSE lets your server push a continuous stream of text events over a single HTTP response. This project now provides a minimal SSE path without chunked encoding: headers are sent, then the connection stays open while your code writes events; closing the connection ends the stream.
+
+- Content-Type: text/event-stream
+- Cache-Control: no-cache is added by default
+- Connection: close is still set by the server; the connection remains open until your writer completes
+
+Quick example (application code):
+
+```csharp
+// Register a handler for /sse (very basic example)
+public sealed class SseDemoHandler : IHttpHandler
+{
+    public Task HandleRequest(CancellationToken ct, IHttpServerRequest request, string relativePath)
+    {
+        if (!string.Equals(request.Method, "GET", StringComparison.OrdinalIgnoreCase)) return Task.CompletedTask;
+        if (!string.Equals(relativePath, "/sse", StringComparison.Ordinal)) return Task.CompletedTask;
+
+        request.StartSseSession(RunSseSession,
+            headers: new Dictionary<string, IReadOnlyCollection<string>>
+            {
+                ["Access-Control-Allow-Origin"] = new[] { "*" } // if you need CORS
+            },
+            options: new SseOptions
+            {
+                HeartbeatInterval = TimeSpan.FromSeconds(30),
+                HeartbeatComment = "keepalive",
+                AutoFlush = true
+            });
+        return Task.CompletedTask;
+    }
+
+    private async Task RunSseSession(ISseSession sse, CancellationToken ct)
+    {
+        // Optional: initial comment
+        await sse.SendCommentAsync("start", ct);
+
+        var i = 0;
+        while (!ct.IsCancellationRequested && i < 10)
+        {
+            // Write an event every second
+            await sse.SendEventAsync($"{DateTimeOffset.UtcNow:O}", eventName: "tick", id: i.ToString(), ct: ct);
+            await Task.Delay(TimeSpan.FromSeconds(1), ct);
+            i++;
+        }
+    }
+}
+
+// Usage during startup
+var server = new Server();
+var ssePath = new RelativePathHandler("/updates");
+ssePath.RegisterHandler(new SseDemoHandler());
+server.RegisterHandler(ssePath);
+var (uri4, _) = server.Start();
+Console.WriteLine($"SSE endpoint: {uri4}/updates/sse");
+```
+
+SseHandler convenience base class:
+```csharp
+public sealed class MySseHandler : SseHandler
+{
+    protected override bool ShouldHandle(IHttpServerRequest request, string relativePath)
+        => base.ShouldHandle(request, relativePath) && relativePath is "/sse";
+
+    protected override Task HandleSseSession(ISseSession sse, CancellationToken ct)
+        => RunSseSession(sse, ct); // Reuse the same private method as above
+}
+
+// Registration
+var server = new Server();
+var ssePath = new RelativePathHandler("/updates");
+ssePath.RegisterHandler(new MySseHandler());
+server.RegisterHandler(ssePath);
+```
+
+Client-side (browser):
+```html
+<script>
+  const es = new EventSource('/updates/sse');
+  es.addEventListener('tick', e => console.log('tick', e.data));
+  es.onmessage = e => console.log('message', e.data);
+  es.onerror = e => console.warn('SSE error', e);
+</script>
+```
+
+Notes:
+- Heartbeats: send a comment frame (`: keepalive\n\n`) every 15–30s to prevent proxy timeouts.
+- Long-running streams: handle CancellationToken to stop cleanly when the client disconnects.
+- Browser connection limits: most browsers cap concurrent HTTP connections per hostname (often 6–15). Without HTTP/2 multiplexing, a single client cannot keep many SSE connections in parallel; this server is not intended for a large number of per-client connections.
+- Public exposure: there is no TLS; prefer localhost or internal networks, or place behind a TLS-terminating reverse proxy.
+
+
+### SSE Spec and Interop Notes
+- Accept negotiation: If a client sends an Accept header that explicitly excludes SSE (text/event-stream), the default SseHandler will reply 406 Not Acceptable. The following values are considered acceptable: text/event-stream, text/*, or */*. If no Accept header is present, requests are accepted. You can override this behavior by overriding ValidateHeaders in your handler (ShouldHandle is for method/path filtering).
+- Last-Event-ID: When a client reconnects, browsers may send a Last-Event-ID header. It is exposed via ISseSession.LastEventId so you can resume from the last delivered event. Set the id parameter in SendEventAsync to help clients keep position.
+- Heartbeats: You can configure periodic comment frames via SseOptions.HeartBeatInterval; this keeps intermediaries from timing out idle connections.
+- Framing: The server uses CRLF (\r\n) in headers and LF (\n) in the SSE body as recommended by typical SSE implementations. Data payloads are normalized to LF before framing each data: line. Each event ends with a blank line.
+- Connection and length: The server does not send Content-Length for streaming SSE responses and relies on connection close to delimit the body (HTTP/1.1 close-delimited). The response header includes Connection: close.
+- Caching: Cache-Control: no-cache is added by default for SSE responses unless you override it via headers.
+- Retry: The SSE spec allows the server to send a retry: <milliseconds> field to suggest a reconnection delay. This helper does not currently provide a dedicated API for retry frames. Most clients also implement their own backoff. If you need this, you can write raw lines through a custom handler or open an issue.
+- CORS: If you need cross-origin access, add appropriate headers (e.g., Access-Control-Allow-Origin) via the headers parameter when starting the SSE session.

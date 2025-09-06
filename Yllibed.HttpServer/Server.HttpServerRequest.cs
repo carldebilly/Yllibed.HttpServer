@@ -1,18 +1,11 @@
-using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Net.Sockets;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
 using Yllibed.Framework.Logging;
-using Yllibed.HttpServer.Extensions;
-
-#pragma warning disable MA0040 // Don't force using ct (netstd2.0 limitations)
+using Yllibed.HttpServer.Sse;
 
 namespace Yllibed.HttpServer;
 
@@ -64,7 +57,7 @@ public sealed partial class Server
 
 					this.Log().LogInformation("Response for url {Url}: {Code} {ResultText}", Url, _responseResultCode, _responseResultText);
 
-					await ProcessResponse(ct, stream).ConfigureAwait(true);
+					await ProcessResponse(stream, ct).ConfigureAwait(true);
 				}
 			}
 			catch (Exception ex)
@@ -88,7 +81,7 @@ public sealed partial class Server
 			var encoding = GetRequestEncoding();
 
 			using var requestReader = new StreamReader(stream, encoding, detectEncodingFromByteOrderMarks: true, (int)BufferSize, leaveOpen: true);
-			var requestLine = await requestReader.ReadLineAsync().ConfigureAwait(true);
+			var requestLine = await requestReader.ReadLineAsync(ct).ConfigureAwait(true);
 			var requestLineParts = requestLine?.Split(' ');
 			if (requestLineParts is not { Length: 3 })
 			{
@@ -104,7 +97,7 @@ public sealed partial class Server
 
 			var requestHeaders = new Dictionary<string, IReadOnlyCollection<string>>(StringComparer.OrdinalIgnoreCase);
 
-			var headerLine = await requestReader.ReadLineAsync().ConfigureAwait(true);
+			var headerLine = await requestReader.ReadLineAsync(ct).ConfigureAwait(true);
 			while (headerLine is { Length: > 0 } && !ct.IsCancellationRequested)
 			{
 				var (header, value) = ParseHeader(headerLine);
@@ -121,7 +114,7 @@ public sealed partial class Server
 					}
 				}
 
-				headerLine = await requestReader.ReadLineAsync().ConfigureAwait(true);
+				headerLine = await requestReader.ReadLineAsync(ct).ConfigureAwait(true);
 			}
 
 			Headers = requestHeaders;
@@ -159,23 +152,23 @@ public sealed partial class Server
 			return Utf8; // default value if an error or not specified
 		}
 
-		private async Task ProcessResponse(CancellationToken ct, NetworkStream stream)
+		private async Task ProcessResponse(NetworkStream stream, CancellationToken ct)
 		{
 			using var responseWriter = new StreamWriter(stream, Utf8, (int)BufferSize, leaveOpen: true);
 			responseWriter.NewLine = "\r\n";
 
-			await ProcessResponseHeader(responseWriter).ConfigureAwait(true);
+			await ProcessResponseHeader(responseWriter, ct).ConfigureAwait(true);
 
-			await responseWriter.FlushAsync().ConfigureAwait(true);
+			await responseWriter.FlushAsync(ct).ConfigureAwait(true);
 
 			await ProcessResponsePayload(ct, responseWriter, stream).ConfigureAwait(true);
 		}
 
-		private async Task ProcessResponseHeader(TextWriter responseWriter)
+		private async Task ProcessResponseHeader(TextWriter responseWriter, CancellationToken ct)
 		{
 			// Response Line
 			await responseWriter.WriteFormattedLineAsync($"HTTP/1.1 {_responseResultCode} {_responseResultText}").ConfigureAwait(true);
-			await responseWriter.FlushAsync().ConfigureAwait(true);
+			await responseWriter.FlushAsync(ct).ConfigureAwait(true);
 
 			// Content-Type
 			await responseWriter.WriteFormattedLineAsync($"Content-Type: {_responseContentType}").ConfigureAwait(true);
@@ -208,17 +201,32 @@ public sealed partial class Server
 
 		private async Task ProcessResponsePayload(CancellationToken ct, TextWriter responseWriter, Stream responseStream)
 		{
-			if (_responseStreamFactory != null)
+			if (_responseStreamingWriter != null)
+			{
+				// Streaming mode: no Content-Length. End headers and stream body progressively.
+				// HTTP/1.1 message delimitation is connection-close (no chunked encoding here),
+				// which is valid per RFC 7230 §3.3.3 (obsoleted by RFC 9112 §6.1).
+				await responseWriter.WriteLineAsync().ConfigureAwait(false); // end of headers
+				await responseWriter.FlushAsync(ct).ConfigureAwait(false);
+				
+				using (var bodyWriter = new StreamWriter(responseStream, Utf8, (int)BufferSize, leaveOpen: true))
+				{
+					bodyWriter.NewLine = "\n"; // SSE commonly uses LF
+					await _responseStreamingWriter(bodyWriter, ct).ConfigureAwait(false);
+					await bodyWriter.FlushAsync(ct).ConfigureAwait(false);
+				}
+			}
+			else if (_responseStreamFactory != null)
 			{
 				using (var streamToSend = await _responseStreamFactory(ct).ConfigureAwait(true))
 				{
 					// Content-Length header
 					await responseWriter.WriteFormattedLineAsync($"Content-Length: {streamToSend.Length}").ConfigureAwait(true);
 					await responseWriter.WriteLineAsync().ConfigureAwait(true);
-
+					
 					// Ensure header is flushed before writing to inner stream directly
-					await responseWriter.FlushAsync().ConfigureAwait(true);
-
+					await responseWriter.FlushAsync(ct).ConfigureAwait(true);
+					
 					// Write the stream content to inner stream
 					await streamToSend.CopyToAsync(responseStream, 2048, ct).ConfigureAwait(false);
 				}
@@ -226,14 +234,14 @@ public sealed partial class Server
 			else
 			{
 				var bytes = Utf8.GetBytes(_responseContent ?? string.Empty);
-
+				
 				// Content-Length header
 				await responseWriter.WriteFormattedLineAsync($"Content-Length: {bytes.Length}").ConfigureAwait(false);
 				await responseWriter.WriteLineAsync().ConfigureAwait(false);
-
+				
 				// Ensure header is flushed before writing to inner stream directly
-				await responseWriter.FlushAsync().ConfigureAwait(false);
-
+				await responseWriter.FlushAsync(ct).ConfigureAwait(false);
+				
 				// Write the stream content to inner stream
 				await responseStream.WriteAsync(bytes, 0, bytes.Length, ct).ConfigureAwait(false);
 			}
@@ -377,10 +385,28 @@ public sealed partial class Server
 			IsResponseSet = true;
 		}
 
+		public void SetStreamingResponse(
+			string contentType,
+			Func<TextWriter, CancellationToken, Task> writer,
+			uint resultCode = 200,
+			string resultText = "OK",
+			IReadOnlyDictionary<string, IReadOnlyCollection<string>>? headers = null)
+		{
+			_responseContentType = contentType;
+			_responseResultCode = resultCode;
+			_responseResultText = resultText;
+			_responseStreamingWriter = writer;
+			_responseHeaders = headers;
+
+			IsResponseSet = true;
+		}
+
+
 		private string? _responseContentType;
 		private uint? _responseResultCode;
 		private string? _responseResultText;
 		private Func<CancellationToken, Task<Stream>>? _responseStreamFactory;
+		private Func<TextWriter, CancellationToken, Task>? _responseStreamingWriter;
 		private string? _responseContent;
 		private IReadOnlyDictionary<string, IReadOnlyCollection<string>>? _responseHeaders;
 		private Uri? _url;

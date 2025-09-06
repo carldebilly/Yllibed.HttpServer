@@ -14,6 +14,13 @@
 		<RepositoryUrl>https://github.com/carldebilly/Yllibed.HttpServer</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<PublishRepositoryUrl>true</PublishRepositoryUrl>
+		<PackageProjectUrl>https://github.com/carldebilly/Yllibed.HttpServer</PackageProjectUrl>
+		<PackageIcon Condition="Exists('Yllibed.png')">Yllibed.png</PackageIcon>
+		<PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+		<PackageTags>http server lightweight self-contained sse iot desktop tools diagnostics</PackageTags>
+		<IncludeSymbols>true</IncludeSymbols>
+		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
 		
 		<!-- General build properties -->
 		<Nullable>enable</Nullable>
@@ -21,17 +28,26 @@
 		<DebugType>portable</DebugType>
 		<DebugSymbols>true</DebugSymbols>
 		<LangVersion>12</LangVersion>
+		<Deterministic>true</Deterministic>
+		<ContinuousIntegrationBuild Condition="'$(CI)'!=''">true</ContinuousIntegrationBuild>
+
+		<ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+		<CentralPackageTransitivePinningEnabled>true</CentralPackageTransitivePinningEnabled>
 	</PropertyGroup>
+	
+	<ItemGroup>
+		<None Include="Yllibed-small.png" Pack="true" PackagePath="/" Condition="Exists('Yllibed-small.png')" />
+	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Nerdbank.GitVersioning" Version="3.6.146" PrivateAssets="all" />
-		<PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="9.0.0">
+		<PackageReference Include="Nerdbank.GitVersioning" PrivateAssets="all" />
+		<PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
 		</PackageReference>
-		<PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All"/>
-		<PackageReference Include="DotNet.ReproducibleBuilds" Version="1.2.25" PrivateAssets="All" />
-		<PackageReference Include="Meziantou.Analyzer" Version="2.0.180">
+		<PackageReference Include="Microsoft.SourceLink.GitHub" PrivateAssets="All"/>
+		<PackageReference Include="DotNet.ReproducibleBuilds" PrivateAssets="All" />
+		<PackageReference Include="Meziantou.Analyzer">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>

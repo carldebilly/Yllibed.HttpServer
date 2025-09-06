@@ -1,20 +1,21 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
+		<PackageId>Yllibed.HttpServer.Json</PackageId>
+		<Title>Yllibed HttpServer Json Adapter</Title>
 		<Product>Yllibed HttpServer Json Adapter</Product>
-		<Description>Json adapter for Yllibed Versatile Http Server using Newtownsoft JSON.NET</Description>
-
+		<Description>JSON adapter for Yllibed.HttpServer using Newtonsoft.Json</Description>
+		<PackageTags>yllibed httpserver json newtonsoft adapter</PackageTags>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 	</PropertyGroup>
 
 	<ItemGroup>
 		<ProjectReference Include="..\Yllibed.HttpServer\Yllibed.HttpServer.csproj" />
-
 		<None Include="README.md" Pack="true" PackagePath="/" />
 	</ItemGroup>
 
 	<ItemGroup>
-	  <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+	  <PackageReference Include="Newtonsoft.Json" />
 	</ItemGroup>
 
 </Project>

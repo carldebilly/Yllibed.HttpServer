@@ -1,9 +1,5 @@
-using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.IO;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Yllibed.HttpServer;
 
@@ -109,7 +105,7 @@ public interface IHttpServerRequest
 	/// See RFC 7231 section 5.3.2 for more details. https://tools.ietf.org/html/rfc7231#section-5.3.2
 	/// </remarks>
 	string? Accept { get; }
-
+	
 	IReadOnlyDictionary<string, IReadOnlyCollection<string>>? Headers { get; }
 
 	/// <summary>
@@ -136,6 +132,21 @@ public interface IHttpServerRequest
 	void SetResponse(
 		string contentType,
 		string content,
+		uint resultCode = 200,
+		string resultText = "OK",
+		IReadOnlyDictionary<string, IReadOnlyCollection<string>>? headers = null);
+
+	/// <summary>
+	/// Set a streaming response. No Content-Length is sent; the server streams until the writer completes.
+	/// </summary>
+	/// <param name="contentType">Response content-type.</param>
+	/// <param name="writer">A callback that writes to the response TextWriter.</param>
+	/// <param name="resultCode">HTTP status code (default 200).</param>
+	/// <param name="resultText">HTTP reason phrase (default OK).</param>
+	/// <param name="headers">Optional additional headers (Content-Type and Connection are controlled by the server).</param>
+	void SetStreamingResponse(
+		string contentType,
+		Func<TextWriter, CancellationToken, Task> writer,
 		uint resultCode = 200,
 		string resultText = "OK",
 		IReadOnlyDictionary<string, IReadOnlyCollection<string>>? headers = null);

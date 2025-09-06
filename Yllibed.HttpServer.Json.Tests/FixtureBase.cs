@@ -1,8 +1,5 @@
 ﻿#nullable disable
-using System;
 using System.Diagnostics;
-using System.Threading;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Yllibed.HttpServer.Json.Tests;
 

@@ -1,9 +1,4 @@
-using System.Net.Http;
-using System.Threading.Tasks;
-using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Yllibed.HttpServer.Extensions;
 
 namespace Yllibed.HttpServer.Tests;
 
@@ -21,8 +16,8 @@ public class DiFixture : FixtureBase
 			opts.Port = 0; // Use dynamic port for test
 			opts.Hostname4 = "127.0.0.1";
 			opts.Hostname6 = "::1";
-			opts.BindAddress4 = System.Net.IPAddress.Loopback;
-			opts.BindAddress6 = System.Net.IPAddress.IPv6Loopback;
+			opts.BindAddress4 = IPAddress.Loopback;
+			opts.BindAddress6 = IPAddress.IPv6Loopback;
 		});
 
 		// Register Server explicitly via factory to avoid ambiguous constructor selection
@@ -37,7 +32,7 @@ public class DiFixture : FixtureBase
 
 			using var client = new HttpClient();
 			var response = await client.GetAsync(uri4, CT).ConfigureAwait(false);
-			response.StatusCode.Should().Be(System.Net.HttpStatusCode.NotFound);
+			response.StatusCode.Should().Be(HttpStatusCode.NotFound);
 		}
 	}
 
@@ -51,8 +46,8 @@ public class DiFixture : FixtureBase
 			opts.Port = 0;
 			opts.Hostname4 = "127.0.0.1";
 			opts.Hostname6 = "::1";
-			opts.BindAddress4 = System.Net.IPAddress.Loopback;
-			opts.BindAddress6 = System.Net.IPAddress.IPv6Loopback;
+			opts.BindAddress4 = IPAddress.Loopback;
+			opts.BindAddress6 = IPAddress.IPv6Loopback;
 		});
 
 		// This should now work without explicit factory thanks to [ActivatorUtilitiesConstructor]
@@ -67,7 +62,7 @@ public class DiFixture : FixtureBase
 
 			using var client = new HttpClient();
 			var response = await client.GetAsync(uri4, CT).ConfigureAwait(false);
-			response.StatusCode.Should().Be(System.Net.HttpStatusCode.NotFound);
+			response.StatusCode.Should().Be(HttpStatusCode.NotFound);
 		}
 	}
 
@@ -82,8 +77,8 @@ public class DiFixture : FixtureBase
 			opts.Port = 0;
 			opts.Hostname4 = "127.0.0.1";
 			opts.Hostname6 = "::1";
-			opts.BindAddress4 = System.Net.IPAddress.Loopback;
-			opts.BindAddress6 = System.Net.IPAddress.IPv6Loopback;
+			opts.BindAddress4 = IPAddress.Loopback;
+			opts.BindAddress6 = IPAddress.IPv6Loopback;
 		});
 
 		var sp = services.BuildServiceProvider();
@@ -95,7 +90,7 @@ public class DiFixture : FixtureBase
 
 			using var client = new HttpClient();
 			var response = await client.GetAsync(uri4, CT).ConfigureAwait(false);
-			response.StatusCode.Should().Be(System.Net.HttpStatusCode.NotFound);
+			response.StatusCode.Should().Be(HttpStatusCode.NotFound);
 		}
 	}
 
@@ -114,7 +109,7 @@ public class DiFixture : FixtureBase
 
 		var sp = services.BuildServiceProvider();
 		var server = sp.GetRequiredService<Server>();
-		server.RegisterHandler(new Yllibed.HttpServer.Handlers.StaticHandler("/", "text/plain", "Hello, world!"));
+		server.RegisterHandler(new StaticHandler("/", "text/plain", "Hello, world!"));
 
 		using (server)
 		{
@@ -122,7 +117,7 @@ public class DiFixture : FixtureBase
 
 			using var client = new HttpClient();
 			var response = await client.GetAsync(uri4, CT).ConfigureAwait(false);
-			response.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
+			response.StatusCode.Should().Be(HttpStatusCode.OK);
 
 			var content = await response.Content.ReadAsStringAsync(CT).ConfigureAwait(false);
 			content.Should().Be("Hello, world!");

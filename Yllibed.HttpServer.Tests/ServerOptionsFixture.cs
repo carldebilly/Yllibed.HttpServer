@@ -1,10 +1,3 @@
-using System;
-using System.Net;
-using System.Net.Http;
-using System.Threading.Tasks;
-using FluentAssertions;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-
 namespace Yllibed.HttpServer.Tests;
 
 [TestClass]
@@ -49,10 +42,10 @@ public class ServerOptionsFixture
 
 		using var client = new HttpClient();
 		var response4 = await client.GetAsync(uri4).ConfigureAwait(false);
-		response4.StatusCode.Should().Be(System.Net.HttpStatusCode.NotFound);
+		response4.StatusCode.Should().Be(HttpStatusCode.NotFound);
 
 		using var client6 = new HttpClient();
 		var response6 = await client6.GetAsync(uri6).ConfigureAwait(false);
-		response6.StatusCode.Should().Be(System.Net.HttpStatusCode.NotFound);
+		response6.StatusCode.Should().Be(HttpStatusCode.NotFound);
 	}
 }

@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Immutable;
+﻿using System.Collections.Immutable;
 using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using Yllibed.HttpServer.Extensions;
 
 namespace Yllibed.HttpServer.Handlers;
 
@@ -29,7 +25,7 @@ public class RelativePathHandler : IHttpHandler, IDisposable
 	private ImmutableList<IHttpHandler> _handlers = ImmutableList<IHttpHandler>.Empty;
 
 	/// <summary>
-	/// Create  a handler for this relative path
+	/// Create a handler for this relative path
 	/// </summary>
 	/// <remarks>
 	/// Disposing the return value will remove the unregister the handler.
@@ -60,7 +56,7 @@ public class RelativePathHandler : IHttpHandler, IDisposable
 
 		if (relativePath.StartsWith(_path, StringComparison.OrdinalIgnoreCase))
 		{
-			var subPath = relativePath.Substring(_path.Length);
+			var subPath = relativePath[_path.Length..];
 			if (!subPath.StartsWith("/", StringComparison.Ordinal))
 			{
 				subPath = "/" + subPath;
