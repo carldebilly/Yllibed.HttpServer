@@ -9,9 +9,9 @@
         "^refs/heads/release/\\d+(?:\\.\\d+)?$"
     ],
     "cloudBuild": {
-        "setAllVariables": true,
+        "setAllVariables": false,
         "buildNumber": {
-            "enabled": true
+            "enabled": false
         }
     },
     "release": {
