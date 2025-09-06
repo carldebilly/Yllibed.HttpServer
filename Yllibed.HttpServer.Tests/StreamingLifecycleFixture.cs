@@ -8,7 +8,7 @@ public sealed class StreamingLifecycleFixture : FixtureBase
 		public Task HandleRequest(CancellationToken ct, IHttpServerRequest request, string relativePath)
 		{
 			if (!string.Equals(request.Method, "GET", StringComparison.OrdinalIgnoreCase)
-			    || !string.Equals(relativePath, "/finite", StringComparison.Ordinal))
+				|| !string.Equals(relativePath, "/finite", StringComparison.Ordinal))
 			{
 				return Task.CompletedTask;
 			}
@@ -42,7 +42,7 @@ public sealed class StreamingLifecycleFixture : FixtureBase
 		resp.StatusCode.Should().Be(HttpStatusCode.OK);
 
 		await using var stream = await resp.Content.ReadAsStreamAsync(CT);
-		using var reader = new StreamReader(stream, leaveOpen: false);
+		using var reader = new StreamReader(stream, System.Text.Encoding.UTF8, detectEncodingFromByteOrderMarks: false, bufferSize: 4096, leaveOpen: false);
 		var lines = new List<string>();
 		while (true)
 		{
@@ -64,7 +64,7 @@ public sealed class StreamingLifecycleFixture : FixtureBase
 		public Task HandleRequest(CancellationToken ct, IHttpServerRequest request, string relativePath)
 		{
 			if (!string.Equals(request.Method, "GET", StringComparison.OrdinalIgnoreCase)
-			    || !string.Equals(relativePath, "/infinite", StringComparison.Ordinal))
+				|| !string.Equals(relativePath, "/infinite", StringComparison.Ordinal))
 			{
 				return Task.CompletedTask;
 			}
@@ -121,13 +121,13 @@ public sealed class StreamingLifecycleFixture : FixtureBase
 		{
 			resp.StatusCode.Should().Be(HttpStatusCode.OK);
 			await using var stream = await resp.Content.ReadAsStreamAsync(CT);
-			using var reader = new StreamReader(stream, leaveOpen: false);
+			using var reader = new StreamReader(stream, System.Text.Encoding.UTF8, detectEncodingFromByteOrderMarks: false, bufferSize: 4096, leaveOpen: false);
 			// Read a single line, then drop connection
 			_ = await reader.ReadLineAsync(CT).ConfigureAwait(false);
 		}
 
 		var completed = await Task.WhenAny(tcs.Task, Task.Delay(TimeSpan.FromSeconds(5), CT));
 		completed.Should().Be(tcs.Task, "handler should observe disconnect and stop promptly");
-		( await tcs.Task ).Should().BeTrue();
+		(await tcs.Task).Should().BeTrue();
 	}
 }

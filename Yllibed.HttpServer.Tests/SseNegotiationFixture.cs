@@ -1,4 +1,3 @@
-using System.Net.Http;
 using Yllibed.HttpServer.Sse;
 
 namespace Yllibed.HttpServer.Tests;

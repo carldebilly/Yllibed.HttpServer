@@ -1,8 +1,3 @@
-using FluentAssertions;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Yllibed.HttpServer;
-using Yllibed.HttpServer.Extensions;
-
 namespace Yllibed.HttpServer.Tests;
 
 [TestClass]
@@ -32,7 +27,7 @@ public class AcceptHeaderHelperFixture
 		public void SetStreamingResponse(string contentType, Func<TextWriter, CancellationToken, Task> writer, uint resultCode = 200, string resultText = "OK", IReadOnlyDictionary<string, IReadOnlyCollection<string>>? headers = null) => throw new NotSupportedException();
 	}
 
-	[DataTestMethod]
+	[TestMethod]
 	// No Accept header means no constraint
 	[DataRow(null, "text/html", true)]
 	[DataRow("", "text/html", true)]

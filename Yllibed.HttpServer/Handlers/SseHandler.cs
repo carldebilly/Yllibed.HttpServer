@@ -18,6 +18,12 @@ public abstract class SseHandler : IHttpHandler
 		=> string.Equals(request.Method, "GET", StringComparison.OrdinalIgnoreCase);
 
 	/// <summary>
+	/// Validates the request's headers. Default checks that the Accept header allows "text/event-stream" (via Accept negotiation).
+	/// Override this to customize Accept/content-type validation; ShouldHandle is intended for method/path filtering.
+	/// </summary>
+	protected virtual bool ValidateHeaders(IHttpServerRequest request) => request.ValidateAccept("text/event-stream");
+
+	/// <summary>
 	/// Optional extra headers for the SSE response (Content-Type and Connection are controlled; Cache-Control: no-cache is added unless overridden).
 	/// </summary>
 	protected virtual IReadOnlyDictionary<string, IReadOnlyCollection<string>>? GetHeaders(IHttpServerRequest request, string relativePath) => null;
@@ -39,7 +45,7 @@ public abstract class SseHandler : IHttpHandler
 			return Task.CompletedTask;
 		}
 
-		if (!request.ValidateAccept("text/event-stream"))
+		if (!ValidateHeaders(request))
 		{
 			request.SetResponse("text/plain", "Not Acceptable", 406, "Not Acceptable");
 			return Task.CompletedTask;

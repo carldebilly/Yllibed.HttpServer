@@ -1,0 +1,15 @@
+<Solution>
+  <Folder Name="/Solution Items/">
+    <File Path="Directory.Build.props" />
+    <File Path="global.json" />
+    <File Path="README.md" />
+    <File Path=".editorconfig" />
+    <File Path=".github\workflows\build.yml" />
+    <File Path="version.json" />
+    <File Path="Directory.Packages.props" />
+  </Folder>
+  <Project Path="Yllibed.HttpServer.Json.Tests\Yllibed.HttpServer.Json.Tests.csproj" />
+  <Project Path="Yllibed.HttpServer.Json\Yllibed.HttpServer.Json.csproj" />
+  <Project Path="Yllibed.HttpServer.Tests\Yllibed.HttpServer.Tests.csproj" />
+  <Project Path="Yllibed.HttpServer\Yllibed.HttpServer.csproj" />
+</Solution>

@@ -28,7 +28,7 @@ jobs:
                   dotnet-version: '9.0'
 
             - name: Build
-              run: dotnet build Yllibed.HttpServer.sln /p:Configuration=Release
+              run: dotnet build Yllibed.HttpServer.slnx /p:Configuration=Release
 
             - name: Collect NuGet packages
               shell: pwsh
@@ -46,8 +46,7 @@ jobs:
                   if-no-files-found: error
 
             - name: Test
-              #run: dotnet test Yllibed.HttpServer.sln /p:Configuration=Release /p:CollectCoverage=true /p:CoverletOutputFormat=opencover --no-build
-              run: dotnet test Yllibed.HttpServer.sln /p:Configuration=Release --no-build
+              run: dotnet test Yllibed.HttpServer.slnx /p:Configuration=Release --no-build
 
     publish:
         if: startsWith(github.ref, 'refs/heads/master')

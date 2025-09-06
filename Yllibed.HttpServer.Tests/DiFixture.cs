@@ -1,5 +1,4 @@
 using Microsoft.Extensions.DependencyInjection;
-using Yllibed.HttpServer.Extensions;
 
 namespace Yllibed.HttpServer.Tests;
 

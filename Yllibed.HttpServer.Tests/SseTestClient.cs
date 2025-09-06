@@ -23,10 +23,10 @@ internal static class SseTestClient
 
 		public HttpResponseMessage Response => _response;
 
-		public async IAsyncEnumerable<ServerSentEvent> ReadEventsAsync([System.Runtime.CompilerServices.EnumeratorCancellation] CancellationToken cancellationToken = default)
+		public async IAsyncEnumerable<ServerSentEvent> ReadEventsAsync([System.Runtime.CompilerServices.EnumeratorCancellation] CancellationToken ct = default)
 		{
-			_stream ??= await _response.Content.ReadAsStreamAsync(cancellationToken).ConfigureAwait(false);
-			await foreach (var ev in ReadFromStreamAsync(_stream, cancellationToken))
+			_stream ??= await _response.Content.ReadAsStreamAsync(ct).ConfigureAwait(false);
+			await foreach (var ev in ReadFromStreamAsync(_stream, ct))
 			{
 				yield return ev;
 			}
@@ -71,8 +71,9 @@ internal static class SseTestClient
 		return new SseConnection(client, resp);
 	}
 
-	public static async IAsyncEnumerable<ServerSentEvent> ReadFromStreamAsync(Stream stream,
-		[System.Runtime.CompilerServices.EnumeratorCancellation] CancellationToken cancellationToken = default)
+	private static async IAsyncEnumerable<ServerSentEvent> ReadFromStreamAsync(
+		Stream stream,
+		[System.Runtime.CompilerServices.EnumeratorCancellation] CancellationToken ct = default)
 	{
 		using var reader = new StreamReader(stream, Encoding.UTF8, detectEncodingFromByteOrderMarks: false, bufferSize: 4096, leaveOpen: false);
 
@@ -80,9 +81,9 @@ internal static class SseTestClient
 		string? id = null;
 		var dataBuilder = new StringBuilder();
 
-		while (!reader.EndOfStream && !cancellationToken.IsCancellationRequested)
+		while (!reader.EndOfStream && !ct.IsCancellationRequested)
 		{
-			var line = await reader.ReadLineAsync(cancellationToken).ConfigureAwait(false) ?? string.Empty;
+			var line = await reader.ReadLineAsync(ct).ConfigureAwait(false) ?? string.Empty;
 
 			if (line.Length == 0)
 			{
