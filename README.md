@@ -85,6 +85,7 @@ A small, self-contained HTTP server for desktop, mobile, and embedded apps that 
 - Supports dependency injection and configuration via `IOptions<ServerOptions>`
 - Configurable bind addresses and hostnames for IPv4/IPv6
 - Supports dynamic port assignment
+- Basic request filtering with GuardHandler (best-effort limits, method/host allow-lists, DI-friendly)
 
 ## Common use cases
 
@@ -110,6 +111,74 @@ If you need to expose it on a public or untrusted network:
 - Bind to loopback only (127.0.0.1 / ::1) when you want to ensure local-only access.
 
 Note: Authentication/authorization is not built-in; implement it in your handlers or at the proxy layer as needed.
+
+### GuardHandler (basic request filtering)
+GuardHandler provides best-effort filtering of incoming requests, rejecting obviously problematic or oversized requests early. This is lightweight filtering against unsophisticated attacks, not comprehensive security.
+
+What it enforces (configurable):
+- MaxUrlLength: 414 URI TOO LONG when exceeded.
+- MaxHeadersCount: 431 REQUEST HEADER FIELDS TOO LARGE when too many headers.
+- MaxHeadersTotalSize: 431 when cumulative header key+value sizes are too large.
+- MaxBodyBytes: 413 PAYLOAD TOO LARGE based on Content-Length.
+- AllowedMethods: 405 METHOD NOT ALLOWED for methods outside the allow-list.
+- RequireHostHeader: 400 BAD REQUEST if Host header is missing.
+- AllowedHosts: 403 FORBIDDEN when Host (with or without port) is not in allow-list.
+
+Basic usage:
+```csharp
+var server = new Server();
+server.RegisterHandler(new GuardHandler(
+    maxUrlLength: 2048,
+    maxHeadersCount: 100,
+    maxHeadersTotalSize: 32 * 1024,
+    maxBodyBytes: 10 * 1024 * 1024,
+    allowedMethods: new[] { "GET", "POST" },
+    allowedHosts: null, // any
+    requireHostHeader: true));
+server.RegisterHandler(new StaticHandler("/", "text/plain", "OK"));
+server.Start();
+```
+
+Wrapping another handler (next handler pattern):
+```csharp
+var hello = new StaticHandler("/", "text/plain", "Hello");
+var guard = new GuardHandler(allowedMethods: new[] { "GET" }, inner: hello);
+server.RegisterHandler(guard); // guard calls hello only if checks pass
+```
+
+Using Microsoft DI elegantly:
+```csharp
+var services = new ServiceCollection();
+services.AddYllibedHttpServer();
+services.AddGuardHandler(opts =>
+{
+    opts.MaxUrlLength = 2048;
+    opts.MaxHeadersCount = 100;
+    opts.AllowedMethods = new[] { "GET", "POST" };
+    opts.RequireHostHeader = true;
+    opts.AllowedHosts = new[] { "127.0.0.1", "localhost" };
+});
+
+// Easiest: auto-register into Server without manual resolution
+services.AddGuardHandlerAndRegister(opts =>
+{
+    opts.MaxUrlLength = 2048;
+    opts.MaxHeadersCount = 100;
+    opts.AllowedMethods = new[] { "GET", "POST" };
+    opts.RequireHostHeader = true;
+    opts.AllowedHosts = new[] { "127.0.0.1", "localhost" };
+});
+
+var sp = services.BuildServiceProvider();
+var server = sp.GetRequiredService<Server>();
+server.RegisterHandler(new StaticHandler("/", "text/plain", "OK"));
+server.Start();
+```
+
+Notes:
+- Place GuardHandler first. If it rejects, it sets the response and stops further processing.
+- AllowedHosts matches either the full Host header (may include port) or the parsed HostName without port.
+- Null for any limit means "no limit" for that dimension.
 
 ## Configuration and Dependency Injection
 
