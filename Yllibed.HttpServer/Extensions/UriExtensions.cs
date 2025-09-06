@@ -9,9 +9,11 @@ public static class UriExtensions
 	public static IDictionary<string, string> GetParameters(this Uri uri)
 	{
 
-		return (from p in uri.OriginalString.Split(_uriSplitChars, StringSplitOptions.RemoveEmptyEntries)
-				select p.Split('=') into parts
-				where parts.Length > 1
-				select parts).ToDictionary((parts) => parts[0], (parts) => string.Join("=", parts.Skip(1)), StringComparer.Ordinal);
+		return uri
+				.OriginalString
+				.Split(_uriSplitChars, StringSplitOptions.RemoveEmptyEntries)
+				.Select(p => p.Split('='))
+				.Where(parts => parts.Length > 1)
+				.ToDictionary(parts => parts[0], parts => String.Join("=", parts.Skip(1)), StringComparer.Ordinal);
 	}
 }
