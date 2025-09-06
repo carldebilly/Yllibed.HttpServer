@@ -35,7 +35,7 @@ jobs:
               run: |
                   $OutputDir = "nuget-packages"
                   New-Item -ItemType Directory -Force -Path $OutputDir
-                  Get-ChildItem -Path . -Recurse -Filter *.nupkg | Copy-Item -Destination $OutputDir
+                  Get-ChildItem -Path . -Recurse -Include *.nupkg,*.snupkg | Copy-Item -Destination $OutputDir
 
             - name: Upload NuGet packages as artifacts
               uses: actions/upload-artifact@v4
@@ -71,3 +71,4 @@ jobs:
                   NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
               run: |
                   dotnet nuget push ./nuget-packages/*.nupkg --api-key $NUGET_API_KEY --source https://api.nuget.org/v3/index.json
+                  dotnet nuget push ./nuget-packages/*.snupkg --api-key $NUGET_API_KEY --source https://api.nuget.org/v3/index.json

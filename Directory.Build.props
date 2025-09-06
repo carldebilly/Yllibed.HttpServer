@@ -21,6 +21,8 @@
 		<PackageTags>http server lightweight self-contained sse iot desktop tools diagnostics</PackageTags>
 		<IncludeSymbols>true</IncludeSymbols>
 		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
+		<EmbedUntrackedSources>true</EmbedUntrackedSources>
+		<ContinuousIntegrationBuild Condition="'$(ContinuousIntegrationBuild)'=='' and '$(CI)'!=''">true</ContinuousIntegrationBuild>
 		
 		<!-- General build properties -->
 		<Nullable>enable</Nullable>
