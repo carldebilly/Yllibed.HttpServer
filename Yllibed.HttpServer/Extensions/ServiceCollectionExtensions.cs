@@ -39,7 +39,18 @@ public static class ServiceCollectionExtensions
 	public static IServiceCollection AddYllibedHttpServer(this IServiceCollection services, Action<ServerOptions> configureOptions)
 	{
 		services.Configure(configureOptions);
-		return services.AddYllibedHttpServer();
+
+		// Avoid calling the parameterless overload to prevent confusion/recursion; register the same singletons directly.
+		services.TryAddSingleton<HandlerRegistrationService>();
+		services.TryAddSingleton<Server>(sp =>
+		{
+			var server = new Server(sp.GetRequiredService<IOptions<ServerOptions>>());
+			var registrationService = sp.GetRequiredService<HandlerRegistrationService>();
+			registrationService.RegisterHandlers(server, sp);
+			return server;
+		});
+
+		return services;
 	}
 
 	/// <summary>

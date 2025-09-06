@@ -60,7 +60,7 @@ public sealed class GuardHandler : IHttpHandler
 		MaxHeadersCount = maxHeadersCount;
 		MaxHeadersTotalSize = maxHeadersTotalSize;
 		MaxBodyBytes = maxBodyBytes;
-		_allowedMethods = allowedMethods != null ? new HashSet<string>(allowedMethods.Select(m => m.ToUpperInvariant()), StringComparer.OrdinalIgnoreCase) : null;
+		_allowedMethods = allowedMethods != null ? new HashSet<string>(allowedMethods, StringComparer.OrdinalIgnoreCase) : null;
 		_allowedHosts = allowedHosts != null ? new HashSet<string>(allowedHosts, StringComparer.OrdinalIgnoreCase) : null;
 		RequireHostHeader = requireHostHeader;
 		_inner = inner;
@@ -138,11 +138,11 @@ public sealed class GuardHandler : IHttpHandler
 				{
 					// Approximate header size as key length + sum of values length
 					total += kvp.Key.Length;
-					foreach (var v in kvp.Value)
+					total += kvp.Value.Sum(v => v?.Length ?? 0);
+					if (total > maxSize)
 					{
-						total += v?.Length ?? 0;
+						break;
 					}
-					if (total > maxSize) break;
 				}
 				if (total > maxSize)
 				{
@@ -162,7 +162,7 @@ public sealed class GuardHandler : IHttpHandler
 		// 4) If wrapping another handler, pass-through
 		if (_inner is not null)
 		{
-			await _inner.HandleRequest(ct, request, relativePath).ConfigureAwait(true);
+			await _inner.HandleRequest(ct, request, relativePath);
 		}
 	}
 
