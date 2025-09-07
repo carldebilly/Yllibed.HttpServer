@@ -51,7 +51,23 @@ public record OAuthCallbackHandler : IAuthCallbackHandler
 			_ => new WebAuthenticationResult(requestUriString, statusCode, WebAuthenticationStatus.ErrorHttp),
 		};
 	}
+	//protected virtual uint GetStatusCode(NameValueCollection parameters) // TODO: Check if we maybe should exchange using GetParameters with return Dictionary to this method
+	//{
+	//	if (parameters.Get(OAuthErrorResponseDefaults.ErrorKey) is string error)
+	//	{
+	//		return error switch
+	//		{
+	//			OAuthErrorResponseDefaults.AccessDenied => 403,
+	//			OAuthErrorResponseDefaults.InvalidClient or OAuthErrorResponseDefaults.UnauthorizedClient or OAuthErrorResponseDefaults.InvalidScope => 401,
+	//			OAuthErrorResponseDefaults.TemporarilyUnavailable => 503,
+	//			OAuthErrorResponseDefaults.UnsupportedGrantType => 500,
+	//			_ => 400 // For all others: Bad Request
+	//		};
 
+	//	}
+
+	//	return 200;
+	//}
 	protected virtual uint GetStatusCode(IDictionary<string, string> parameters)
 	{
 		if (parameters.TryGetValue(OAuthErrorResponseDefaults.ErrorKey, out var error))
@@ -79,8 +95,6 @@ public record OAuthCallbackHandler : IAuthCallbackHandler
 			_ => "Authentication completed - you can close this browser now."
 		};
 	}
-	public Task<WebAuthenticationResult> WaitForCallbackAsync()
-	{
-		return _tcs.Task;
-	}
+	public Task<WebAuthenticationResult> WaitForCallbackAsync() => _tcs.Task;
+
 }

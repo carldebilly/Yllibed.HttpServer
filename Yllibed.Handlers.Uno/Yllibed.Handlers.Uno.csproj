@@ -6,12 +6,9 @@
     <Nullable>enable</Nullable>
 	<UnoFeatures>
 		Logging;
-		Configuration;
+		Authentication;
 	</UnoFeatures>
   </PropertyGroup>
-	<ItemGroup Label="Packages">
-		<!-- <PackageReference Include="Uno.UI"/> TODO: Decide if using PackageReference or Uno.Sdk is able to provide the wanted Low dependency level.-->
-	</ItemGroup>
 	<ItemGroup Label="Projects">
 	  <ProjectReference Include="..\Yllibed.HttpServer\Yllibed.HttpServer.csproj" />
 	</ItemGroup>
