@@ -3,7 +3,7 @@
 namespace Yllibed.Handlers.Uno;
 public record AuthCallbackHandlerOptions
 {
-	public const string SectionName = "AuthCallback";
+	public const string DefaultName = "AuthCallback";
 	/// <summary>
 	/// Configures the expected URI for authentication Callbacks.
 	/// </summary>

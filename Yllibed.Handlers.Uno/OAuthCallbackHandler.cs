@@ -1,25 +1,46 @@
+using Microsoft.Extensions.DependencyInjection;
+
 namespace Yllibed.Handlers.Uno;
 public record OAuthCallbackHandler : IAuthCallbackHandler
 {
 	private readonly TaskCompletionSource<WebAuthenticationResult> _tcs = new();
 	public Uri CallbackUri { get; init; }
-	public OAuthCallbackHandler(Uri callbackUri)
+
+	public string Name { get; init; }
+
+	public OAuthCallbackHandler(Uri callbackUri, string name = AuthCallbackHandlerOptions.DefaultName)
 	{
 		if (callbackUri is null || callbackUri.Scheme != Uri.UriSchemeHttp && callbackUri.Scheme != Uri.UriSchemeHttps)
 		{
 			throw new ArgumentException("The CallbackUri must be an absolute URI with HTTP or HTTPS scheme.", nameof(callbackUri));
 		}
+		Name = name;
 		CallbackUri = callbackUri;
+	}
+
+	public OAuthCallbackHandler(
+	AuthCallbackHandlerOptions options,
+	[ServiceKey] string name = AuthCallbackHandlerOptions.DefaultName)
+	{
+		if (options?.CallbackUri is not Uri uri
+			|| uri.Scheme != Uri.UriSchemeHttp && uri.Scheme != Uri.UriSchemeHttps)
+		{
+			throw new ArgumentException("The CallbackUri must be an absolute URI with HTTP or HTTPS scheme.", nameof(options));
+		}
+		Name = name;
+		CallbackUri = uri;
 	}
 	[Microsoft.Extensions.DependencyInjection.ActivatorUtilitiesConstructor]
 	public OAuthCallbackHandler(
-		IOptions<AuthCallbackHandlerOptions> options)
+		IOptions<AuthCallbackHandlerOptions> options,
+		[ServiceKey] string name = AuthCallbackHandlerOptions.DefaultName)
 	{
 		if (options?.Value?.CallbackUri is not Uri uri
 			|| uri.Scheme != Uri.UriSchemeHttp && uri.Scheme != Uri.UriSchemeHttps)
 		{
 			throw new ArgumentException("The CallbackUri must be an absolute URI with HTTP or HTTPS scheme.", nameof(options));
 		}
+		Name = name;
 		CallbackUri = uri;
 	}
 
