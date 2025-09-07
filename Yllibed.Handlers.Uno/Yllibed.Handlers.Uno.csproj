@@ -1,0 +1,15 @@
+﻿<Project Sdk="Uno.Sdk">
+ 
+  <PropertyGroup>
+    <TargetFrameworks>net9.0</TargetFrameworks>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+	<UnoFeatures>
+		Logging;
+		Authentication;
+	</UnoFeatures>
+  </PropertyGroup>
+	<ItemGroup Label="Projects">
+	  <ProjectReference Include="..\Yllibed.HttpServer\Yllibed.HttpServer.csproj" />
+	</ItemGroup>
+</Project>

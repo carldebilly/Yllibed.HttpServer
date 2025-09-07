@@ -14,5 +14,6 @@
     <PackageVersion Include="System.Collections.Immutable" Version="9.0.8" />
     <PackageVersion Include="System.Diagnostics.DiagnosticSource" Version="9.0.8" />
     <PackageVersion Include="System.ValueTuple" Version="4.6.1" />
+	<!--<PackageVersion Include="Uno.UI" Version="5.6.99" /> TODO: Decide if using PackageVersion or Uno.Sdk is able to provide the wanted Low dependency level.-->
   </ItemGroup>
 </Project>

@@ -8,6 +8,7 @@
     <File Path="version.json" />
     <File Path="Directory.Packages.props" />
   </Folder>
+  <Project Path="Yllibed.Handlers.Uno/Yllibed.Handlers.Uno.csproj" Id="337a3202-2c6c-4f35-8fa2-cb4d98234fb7" />
   <Project Path="Yllibed.HttpServer.Json.Tests\Yllibed.HttpServer.Json.Tests.csproj" />
   <Project Path="Yllibed.HttpServer.Json\Yllibed.HttpServer.Json.csproj" />
   <Project Path="Yllibed.HttpServer.Tests\Yllibed.HttpServer.Tests.csproj" />
