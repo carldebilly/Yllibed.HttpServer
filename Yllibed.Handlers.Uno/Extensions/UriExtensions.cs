@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Yllibed.HttpServer.Extensions;
+namespace Yllibed.Handlers.Uno.Extensions;
 
 public static class UriExtensions
 {
@@ -14,6 +14,6 @@ public static class UriExtensions
 				.Split(_uriSplitChars, StringSplitOptions.RemoveEmptyEntries)
 				.Select(p => p.Split('='))
 				.Where(parts => parts.Length > 1)
-				.ToDictionary(parts => parts[0], parts => String.Join("=", parts.Skip(1)), StringComparer.Ordinal);
+				.ToDictionary(parts => parts[0], parts => string.Join('=', parts.Skip(1)), StringComparer.Ordinal);
 	}
 }

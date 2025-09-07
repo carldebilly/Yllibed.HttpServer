@@ -1,8 +1,4 @@
-using System.Collections.Generic;
-using System.Linq;
-using Microsoft.Extensions.Options;
-
-namespace Yllibed.HttpServer.Handlers;
+namespace Yllibed.Handlers.Uno;
 public record OAuthCallbackHandler : IAuthCallbackHandler
 {
 	private readonly TaskCompletionSource<WebAuthenticationResult> _tcs = new();

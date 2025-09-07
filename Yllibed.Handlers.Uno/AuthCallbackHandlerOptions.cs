@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Yllibed.HttpServer.Handlers;
+namespace Yllibed.Handlers.Uno;
 public record AuthCallbackHandlerOptions
 {
 	public const string SectionName = "AuthCallback";

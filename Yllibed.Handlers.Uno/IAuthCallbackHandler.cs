@@ -1,4 +1,4 @@
-namespace Yllibed.HttpServer.Handlers;
+namespace Yllibed.Handlers.Uno;
 
 public interface IAuthCallbackHandler : IHttpHandler
 {
