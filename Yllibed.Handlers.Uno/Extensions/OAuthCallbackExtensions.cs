@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 
-namespace Yllibed.Handlers.Uno;
+namespace Yllibed.Handlers.Uno.Extensions;
 public static class OAuthCallbackExtensions
 {
 	/// <summary>
@@ -10,7 +10,7 @@ public static class OAuthCallbackExtensions
 	/// <returns>The updated <see cref="IServiceCollection"/> instance.</returns>
 	public static IServiceCollection AddOAuthCallbackHandler(this IServiceCollection services)
 	{
-		services.AddSingleton<OAuthCallbackHandler>(sp => new OAuthCallbackHandler(sp.GetRequiredService<IOptions<AuthCallbackHandlerOptions>>()));
+		services.AddSingleton(sp => new OAuthCallbackHandler(sp.GetRequiredService<IOptions<AuthCallbackHandlerOptions>>()));
 		services.AddSingleton<IAuthCallbackHandler>(sp => sp.GetRequiredService<OAuthCallbackHandler>()); // Register as IAuthCallbackHandler so eventual consumers can get it as expected Interface,
 																										  // which provides the callback awaiting functionality at registration in WebAuthenticationBrokerProvider
 		return services;
