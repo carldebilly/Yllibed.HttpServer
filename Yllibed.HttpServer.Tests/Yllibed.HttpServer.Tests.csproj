@@ -22,4 +22,10 @@
 		<PackageReference Include="System.ValueTuple" />
 		<PackageReference Update="Microsoft.NET.Test.Sdk" VersionOverride="17.14.1" />
 	</ItemGroup>
+	<ItemGroup>
+		<Compile Remove="E2EApp\**\*.cs" />
+		<Compile Remove="E2EApp\**\*.fs" />
+		<None Include="E2EApp\**\*" Exclude="**\bin\**;**\obj\**" />
+		<None Include="e2e\**\*" Exclude="**\bin\**;**\obj\**" />
+	</ItemGroup>
 </Project>

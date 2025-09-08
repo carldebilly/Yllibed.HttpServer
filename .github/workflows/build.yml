@@ -46,7 +46,8 @@ jobs:
                   if-no-files-found: error
 
             - name: Test
-              run: dotnet test Yllibed.HttpServer.slnx /p:Configuration=Release --no-build
+              run: dotnet test Yllibed.HttpServer.slnx /p:Configuration=Release --no-build --collect "XPlat Code Coverage"
+
 
     publish:
         if: startsWith(github.ref, 'refs/heads/master')
